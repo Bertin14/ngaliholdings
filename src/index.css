@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ngali-orange: #C9824B;
+  --color-ngali-black: #161616;
+}
