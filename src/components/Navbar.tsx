@@ -1,9 +1,8 @@
-import { useState } from 'react'
+
 import { Link } from 'react-router-dom'
 import ngaliLogo from '../assets/Ngali_logo.png'
 
 export default function Navbar() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
