@@ -22,7 +22,7 @@ export default function About() {
           backgroundPosition: 'center',
         }}
       >
-        <div className="absolute inset-0 bg-black/60"></div>
+        <div className="absolute inset-0 bg-black/30"></div>
         <h1 className="relative z-10 text-3xl font-bold text-white">About Us</h1>
       </section>
 
