@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import contactHero from '../assets/contact us.jpg'
 
 export default function Contact() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' })
@@ -16,9 +17,17 @@ export default function Contact() {
 
   return (
     <div>
-      <section className="min-h-screen w-full flex items-center justify-center bg-ngali-black text-white px-6">
-        <h1 className="text-3xl font-bold">Contact Us</h1>
-      </section>
+      <section
+  className="min-h-screen w-full flex items-center justify-center px-6 relative"
+  style={{
+    backgroundImage: `url(${contactHero})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+  }}
+>
+  <div className="absolute inset-0 bg-black/50"></div>
+  <h1 className="relative z-10 text-3xl font-bold text-white">Contact Us</h1>
+</section>
 
       <section className="min-h-screen w-full flex items-center justify-center px-6">
         <div className="max-w-2xl w-full">
