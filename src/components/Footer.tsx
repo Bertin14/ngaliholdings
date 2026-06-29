@@ -1,9 +1,19 @@
 import { Link } from 'react-router-dom'
+import footerImage from '../assets/footer-picture.jpg'
 
 export default function Footer() {
   return (
-    <footer className="min-h-screen w-full flex flex-col items-center justify-center bg-ngali-black text-gray-300 px-6">
-      <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+    <footer
+      className="min-h-screen w-full flex flex-col items-center justify-center text-gray-300 px-6 relative"
+      style={{
+        backgroundImage: `url(${footerImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+    >
+      <div className="absolute inset-0 bg-black/60"></div>
+
+      <div className="relative z-10 max-w-6xl w-full grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
         <div>
           <h3 className="text-white font-semibold text-lg mb-2">Ngali Holdings</h3>
           <p className="text-sm text-gray-400">
@@ -28,7 +38,7 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="border-t border-gray-800 text-center text-xs text-gray-500 py-4 w-full">
+      <div className="relative z-10 border-t border-gray-800 text-center text-xs text-gray-500 py-4 w-full">
         © {new Date().getFullYear()} Ngali Holdings. All rights reserved.
       </div>
     </footer>
