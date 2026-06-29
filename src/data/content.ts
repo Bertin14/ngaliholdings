@@ -17,6 +17,7 @@ import miningImg from '../assets/mining.png'
 import transportImg from '../assets/transport.png'
 import healthImg from '../assets/health.png'
 import blogImg from '../assets/blog.png'
+import genocideMemorial from '../assets/genocide_memorial.png'
 
 
 export const sectorsHeroImages = [sector1, sector2, sector3];
@@ -110,6 +111,8 @@ export const sectorsContent = {
     { title: "Health", text: "Investing in healthcare and pharmaceuticals to improve health outcomes and access to medicine.", image: healthImg },
   ],
 };
+
+
 export interface BlogPost {
   id: string;
   title: string;
@@ -117,6 +120,7 @@ export interface BlogPost {
   category: string;
   excerpt: string;
   content: string;
+  image: string;
 }
 
 export const blogPosts: BlogPost[] = [
@@ -127,6 +131,7 @@ export const blogPosts: BlogPost[] = [
     category: "Community",
     excerpt: "As part of its annual remembrance activities, Ngali Holdings staff visited the Kigali Genocide Memorial in Gisozi to honor the 31st commemoration of the 1994 Genocide against the Tutsi.",
     content: "As part of its annual remembrance activities, Ngali Holdings staff visited the Kigali Genocide Memorial in Gisozi, where more than 250,000 victims of the 1994 Genocide against the Tutsi are laid to rest. This visit was held in line with the 31st commemoration, a time to honor the victims, reflect on the past, and renew our collective commitment to 'Never Again.' During this occasion, the CEO of Ngali Holdings delivered a heartfelt message to the team, emphasizing the importance of unity, reconciliation, and nation-building.",
+    image: genocideMemorial,
   },
   {
     id: "vision-2020-partnership",
@@ -135,6 +140,7 @@ export const blogPosts: BlogPost[] = [
     category: "Company news",
     excerpt: "Ngali Holdings continues to align its investment strategy with the Government of Rwanda's long-term development goals.",
     content: "Ngali Holdings continues to align its investment strategy with the Government of Rwanda's long-term development goals, with a particular focus on the ICT, transport, energy, health, and agricultural sectors. Through this alignment, the company aims to support job creation and economic growth in line with national priorities.",
+    image: healthImg,
   },
   {
     id: "subsidiary-spotlight-mining",
@@ -143,5 +149,6 @@ export const blogPosts: BlogPost[] = [
     category: "Subsidiaries",
     excerpt: "A closer look at how Ngali Mining is positioning itself as a leader in responsible mineral exploration and processing.",
     content: "Ngali Mining is interested in exploration, mining, processing and trading of Rwanda's volcanic mineral deposits to tap into the market for the benefit of the Rwandan people. The subsidiary seeks to be a regional leader in exploration, production, and the transformation of natural resources by providing high-quality service through the use of advanced technology.",
+    image: miningImg,
   },
 ];

@@ -27,13 +27,18 @@ export default function BlogDetail() {
       </section>
 
       <section className="min-h-screen w-full flex flex-col items-center justify-center px-6">
-        <div className="max-w-3xl text-center">
-          <p className="text-gray-700 text-lg leading-relaxed">{post.content}</p>
-          <Link to="/blogs" className="text-ngali-orange hover:underline mt-8 inline-block">
-            ← Back to all posts
-          </Link>
-        </div>
-      </section>
+  <img
+    src={post.image}
+    alt={post.title}
+    className="w-full max-w-3xl h-80 object-cover rounded-lg mb-8"
+  />
+  <div className="max-w-3xl text-center">
+    <p className="text-gray-700 text-lg leading-relaxed">{post.content}</p>
+    <Link to="/blogs" className="text-ngali-orange hover:underline mt-8 inline-block">
+      ← Back to all posts
+    </Link>
+  </div>
+</section>
     </div>
   )
 }
