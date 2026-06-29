@@ -43,11 +43,15 @@ export default function Blogs() {
       <span className="text-xs font-medium text-ngali-orange uppercase tracking-wide">
         {post.category}
       </span>
-      <h2 className="font-semibold text-gray-800 text-lg mt-2 mb-2 line-clamp-2">
+      <h2 className="font-semibold text-gray-800 text-lg mt-2 mb-3 line-clamp-2">
         {post.title}
       </h2>
-      <p className="text-gray-600 text-sm line-clamp-3 mb-3">{post.excerpt}</p>
-      <span className="text-xs text-gray-400">{post.date}</span>
+      <div className="flex items-center justify-between">
+        <span className="text-xs text-gray-400">{post.date}</span>
+        <span className="text-ngali-orange text-sm font-medium hover:underline">
+          Read more →
+        </span>
+      </div>
     </div>
   </Link>
 ))}
