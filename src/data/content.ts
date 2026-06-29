@@ -16,9 +16,12 @@ import agricultureImg from '../assets/agriculture.png'
 import miningImg from '../assets/mining.png'
 import transportImg from '../assets/transport.png'
 import healthImg from '../assets/health.png'
+import blogImg from '../assets/blog.png'
+import waterImg from '../assets/water-flowing-from-open-sluice-gates-dam.jpg'
 
 export const sectorsHeroImages = [sector1, sector2, sector3];
 export const aboutHeroImages = [aboutHero1, aboutHero2];
+export const blogsHeroImages = [blogImg, hero3, waterImg, agricultureImg];
 
 
 export interface Subsidiary {
