@@ -11,7 +11,7 @@ export default function Footer() {
         backgroundPosition: 'center',
       }}
     >
-      <div className="absolute inset-0 bg-black/30"></div>
+      <div className="absolute inset-0 bg-black/20"></div>
 
       <div className="relative z-10 max-w-6xl w-full grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
         <div>
