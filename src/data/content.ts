@@ -9,7 +9,11 @@ import lunaSmelter from '../assets/LuNa Smelter.png'
 import trinity from '../assets/trinity.png'
 import aboutHero1 from '../assets/About us_1.jpg'
 import aboutHero2 from '../assets/About us_2.jpg'
+import sector1 from '../assets/sector1.jpg'
+import sector2 from '../assets/sector2.jpg'
+import sector3 from '../assets/sector3.jpg'
 
+export const sectorsHeroImages = [sector1, sector2, sector3];
 export const aboutHeroImages = [aboutHero1, aboutHero2];
 
 
