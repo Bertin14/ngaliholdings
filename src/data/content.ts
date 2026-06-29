@@ -12,6 +12,10 @@ import aboutHero2 from '../assets/About us_2.jpg'
 import sector1 from '../assets/sector1.jpg'
 import sector2 from '../assets/sector2.jpg'
 import sector3 from '../assets/sector3.jpg'
+import agricultureImg from '../assets/agriculture.png'
+import miningImg from '../assets/mining.png'
+import transportImg from '../assets/transport.png'
+import healthImg from '../assets/health.png'
 
 export const sectorsHeroImages = [sector1, sector2, sector3];
 export const aboutHeroImages = [aboutHero1, aboutHero2];
@@ -97,10 +101,10 @@ export const aboutContent = {
 export const sectorsContent = {
   intro: "Ngali Holdings targets strategic sectors for development across Africa, with a focus on improving lives through diversified investment.",
   sectors: [
-    { title: "Agriculture", text: "Improving commodity exchange and creating a financial platform to achieve food security and maximize farmer earnings through processing and mechanization." },
-    { title: "Mining", text: "Exploring and trading Rwanda's volcanic mineral deposits through mining, processing, and exporting initiatives." },
-    { title: "Transport", text: "Investing in aerospace, railways, canals, ports, and harbors to expand transportation infrastructure." },
-    { title: "Health", text: "Investing in healthcare and pharmaceuticals to improve health outcomes and access to medicine." },
+    { title: "Agriculture", text: "Improving commodity exchange and creating a financial platform to achieve food security and maximize farmer earnings through processing and mechanization.", image: agricultureImg },
+    { title: "Mining", text: "Exploring and trading Rwanda's volcanic mineral deposits through mining, processing, and exporting initiatives.", image: miningImg },
+    { title: "Transport", text: "Investing in aerospace, railways, canals, ports, and harbors to expand transportation infrastructure.", image: transportImg },
+    { title: "Health", text: "Investing in healthcare and pharmaceuticals to improve health outcomes and access to medicine.", image: healthImg },
   ],
 };
 export interface BlogPost {

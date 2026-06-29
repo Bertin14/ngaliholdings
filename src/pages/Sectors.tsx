@@ -33,11 +33,14 @@ export default function Sectors() {
       <section className="min-h-screen w-full flex items-center justify-center px-6">
         <div className="max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-6">
           {sectorsContent.sectors.map((sector) => (
-            <div key={sector.title} className="bg-gray-50 p-6 rounded-lg">
-              <h3 className="font-semibold text-gray-800 mb-2">{sector.title}</h3>
-              <p className="text-gray-600 text-sm">{sector.text}</p>
-            </div>
-          ))}
+  <div key={sector.title} className="bg-gray-50 rounded-lg overflow-hidden">
+    <img src={sector.image} alt={sector.title} className="w-full h-48 object-cover" />
+    <div className="p-6">
+      <h3 className="font-semibold text-gray-800 mb-2">{sector.title}</h3>
+      <p className="text-gray-600 text-sm">{sector.text}</p>
+    </div>
+  </div>
+))}
         </div>
       </section>
     </div>
