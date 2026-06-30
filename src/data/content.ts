@@ -159,6 +159,7 @@ export interface JobOpening {
   location: string;
   type: string;
   description: string;
+  deadline: string;
 }
 
 export const jobOpenings: JobOpening[] = [
@@ -169,6 +170,7 @@ export const jobOpenings: JobOpening[] = [
     location: "Kigali, Rwanda",
     type: "Full-time",
     description: "We are looking for a detail-oriented Finance Analyst to support budgeting, forecasting, and financial reporting across our subsidiaries. The ideal candidate has a strong background in financial modeling and a passion for Africa's development sector.",
+    deadline: "2026-07-15",
   },
   {
     id: "project-risk-manager",
@@ -177,6 +179,7 @@ export const jobOpenings: JobOpening[] = [
     location: "Kigali, Rwanda",
     type: "Full-time",
     description: "Ngali Holdings is seeking a Project Risk Manager to identify, assess, and mitigate risks across our portfolio of infrastructure and energy projects, ensuring smooth execution and long-term sustainability.",
+    deadline: "2026-07-20",
   },
   {
     id: "communications-officer",
@@ -185,5 +188,6 @@ export const jobOpenings: JobOpening[] = [
     location: "Kigali, Rwanda",
     type: "Full-time",
     description: "We're hiring a Communications Officer to manage our public relations, content creation, and brand messaging across our subsidiaries, helping tell the story of Ngali Holdings' impact across Africa.",
+    deadline: "2026-07-31",
   },
 ];
