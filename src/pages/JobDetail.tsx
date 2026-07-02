@@ -37,7 +37,7 @@ export default function JobDetail() {
     e.preventDefault()
     setSubmitting(true)
 
-    await fetch('${import.meta.env.VITE_API_URL}/api/applications', {
+    await fetch(`${import.meta.env.VITE_API_URL}/api/applications`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

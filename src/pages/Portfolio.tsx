@@ -14,7 +14,7 @@ export default function Portfolio() {
   const [currentSlide, setCurrentSlide] = useState(0)
 
   useEffect(() => {
-    fetch('${import.meta.env.VITE_API_URL}/api/subsidiaries')
+    fetch(`${import.meta.env.VITE_API_URL}/api/subsidiaries`)
       .then((res) => res.json())
       .then((data) => {
         setSubsidiaries(data)
