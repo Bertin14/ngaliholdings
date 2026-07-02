@@ -30,7 +30,7 @@ useEffect(() => {
 }, [])
 
   useEffect(() => {
-    fetch('http://localhost:3001/api/blogs')
+    fetch('${import.meta.env.vite_api_url}/api/blogs')
       .then((res) => res.json())
       .then((data) => {
         setBlogPosts(data)

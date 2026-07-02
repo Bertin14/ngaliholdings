@@ -27,7 +27,7 @@ export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0)
 
   useEffect(() => {
-    fetch('http://localhost:3001/api/subsidiaries')
+    fetch('${import.meta.env.VITE_API_URL}/api/subsidiaries')
       .then((res) => res.json())
       .then((data) => {
         setSubsidiaries(data)
