@@ -34,7 +34,7 @@ export default function About() {
   }, [])
 
   useEffect(() => {
-    fetch('${import.meta.env.vite_api_url}/api/team')
+    fetch(`${import.meta.env.VITE_API_URL}/api/team`)
       .then((res) => res.json())
       .then((data) => {
         setTeamMembers(data)

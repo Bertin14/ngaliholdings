@@ -28,7 +28,7 @@ export default function Careers() {
   const [activeDepartment, setActiveDepartment] = useState('All')
 
   useEffect(() => {
-    fetch('${import.meta.env.vite_api_url}/api/jobs')
+    fetch('${import.meta.env.VITE_API_URL}/api/jobs')
       .then((res) => res.json())
       .then((data) => {
         setJobOpenings(data)

@@ -21,7 +21,7 @@ export default function JobDetail() {
   const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
-    fetch(`${import.meta.env.vite_api_url}/api/jobs/${id}`)
+    fetch(`${import.meta.env.VITE_API_URL}/api/jobs/${id}`)
       .then((res) => res.json())
       .then((data) => {
         setJob(data)
@@ -37,7 +37,7 @@ export default function JobDetail() {
     e.preventDefault()
     setSubmitting(true)
 
-    await fetch('${import.meta.env.vite_api_url}/api/applications', {
+    await fetch('${import.meta.env.VITE_API_URL}/api/applications', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

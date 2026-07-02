@@ -14,7 +14,7 @@ export default function Contact() {
   e.preventDefault()
   setSubmitting(true)
 
-  await fetch('${import.meta.env.vite_api_url}/api/contact', {
+  await fetch('${import.meta.env.VITE_API_URL}/api/contact', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(formData),

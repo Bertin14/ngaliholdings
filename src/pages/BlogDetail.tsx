@@ -17,7 +17,7 @@ export default function BlogDetail() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch(`${import.meta.env.vite_api_url}/api/blogs/${id}`)
+    fetch(`${import.meta.env.VITE_API_URL}/api/blogs/${id}`)
       .then((res) => res.json())
       .then((data) => {
         setPost(data)

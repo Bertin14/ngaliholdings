@@ -14,7 +14,7 @@ export default function SubsidiaryDetail() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch(`${import.meta.env.vite_api_url}/api/subsidiaries/${id}`)
+    fetch(`${import.meta.env.VITE_API_URL}/api/subsidiaries/${id}`)
       .then((res) => res.json())
       .then((data) => {
         setSubsidiary(data)

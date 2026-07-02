@@ -27,7 +27,7 @@ useEffect(() => {
 }, [])
 
   useEffect(() => {
-    fetch('${import.meta.env.vite_api_url}/api/sectors')
+    fetch('${import.meta.env.VITE_API_URL}/api/sectors')
       .then((res) => res.json())
       .then((data) => {
         setSectors(data)
