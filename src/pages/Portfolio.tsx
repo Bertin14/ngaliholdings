@@ -1,24 +1,51 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { subsidiaries } from '../data/content'
+
+interface Subsidiary {
+  id: string
+  name: string
+  description: string
+  image: string
+}
 
 export default function Portfolio() {
+  const [subsidiaries, setSubsidiaries] = useState<Subsidiary[]>([])
+  const [loading, setLoading] = useState(true)
   const [currentSlide, setCurrentSlide] = useState(0)
-  const portfolioHeroImages = subsidiaries.map((sub) => sub.image)
 
   useEffect(() => {
+    fetch('http://localhost:3001/api/subsidiaries')
+      .then((res) => res.json())
+      .then((data) => {
+        setSubsidiaries(data)
+        setLoading(false)
+      })
+  }, [])
+
+  useEffect(() => {
+    if (subsidiaries.length === 0) return
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % portfolioHeroImages.length)
+      setCurrentSlide((prev) => (prev + 1) % subsidiaries.length)
     }, 4000)
     return () => clearInterval(timer)
-  }, [portfolioHeroImages.length])
+  }, [subsidiaries])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center">
+        <p className="text-gray-500">Loading...</p>
+      </div>
+    )
+  }
 
   return (
     <div>
       <section
         className="min-h-screen w-full flex flex-col items-center justify-center text-white px-6 text-center relative transition-all duration-700"
         style={{
-          backgroundImage: `url(${portfolioHeroImages[currentSlide]})`,
+          backgroundImage: subsidiaries[currentSlide]
+            ? `url(${subsidiaries[currentSlide].image})`
+            : 'none',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}

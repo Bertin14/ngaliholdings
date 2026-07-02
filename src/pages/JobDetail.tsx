@@ -1,25 +1,66 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { jobOpenings } from '../data/content'
+
+interface JobOpening {
+  id: string
+  title: string
+  department: string
+  location: string
+  type: string
+  description: string
+  deadline: string
+}
 
 export default function JobDetail() {
   const { id } = useParams()
-  const job = jobOpenings.find((j) => j.id === id)
+  const [job, setJob] = useState<JobOpening | null>(null)
+  const [loading, setLoading] = useState(true)
 
   const [formData, setFormData] = useState({ name: '', email: '', coverLetter: '' })
   const [submitted, setSubmitted] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+
+  useEffect(() => {
+    fetch(`http://localhost:3001/api/jobs/${id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setJob(data)
+        setLoading(false)
+      })
+  }, [id])
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    console.log('Application submitted:', { job: job?.title, ...formData })
+    setSubmitting(true)
+
+    await fetch('http://localhost:3001/api/applications', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        jobId: id,
+        name: formData.name,
+        email: formData.email,
+        coverLetter: formData.coverLetter,
+      }),
+    })
+
+    setSubmitting(false)
     setSubmitted(true)
   }
 
-  if (!job) {
+  if (loading) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center">
+        <p className="text-gray-500">Loading...</p>
+      </div>
+    )
+  }
+
+  if (!job || (job as any).error) {
     return (
       <div className="min-h-screen w-full flex flex-col items-center justify-center px-6 text-center">
         <h1 className="text-2xl font-bold text-gray-800">Job not found</h1>
@@ -85,8 +126,12 @@ export default function JobDetail() {
                 />
               </div>
 
-              <button type="submit" className="bg-ngali-orange text-white px-6 py-2 rounded hover:opacity-90">
-                Submit application
+              <button
+                type="submit"
+                disabled={submitting}
+                className="bg-ngali-orange text-white px-6 py-2 rounded hover:opacity-90 disabled:opacity-50"
+              >
+                {submitting ? 'Submitting...' : 'Submit application'}
               </button>
             </form>
           )}

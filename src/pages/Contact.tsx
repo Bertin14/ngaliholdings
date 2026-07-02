@@ -4,16 +4,25 @@ import contactHero from '../assets/contact us.jpg'
 export default function Contact() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' })
   const [submitted, setSubmitted] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    console.log('Form submitted:', formData)
-    setSubmitted(true)
-  }
+  async function handleSubmit(e: React.FormEvent) {
+  e.preventDefault()
+  setSubmitting(true)
+
+  await fetch('http://localhost:3001/api/contact', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(formData),
+  })
+
+  setSubmitting(false)
+  setSubmitted(true)
+}
 
   return (
     <div>
@@ -71,8 +80,12 @@ export default function Contact() {
                 />
               </div>
 
-              <button type="submit" className="bg-ngali-orange text-white px-6 py-2 rounded hover:opacity-90">
-                Send message
+              <button
+                type="submit"
+                disabled={submitting}
+                className="bg-ngali-orange text-white px-6 py-2 rounded hover:opacity-90 disabled:opacity-50"
+>
+                {submitting ? 'Sending...' : 'Send message'}
               </button>
             </form>
           )}

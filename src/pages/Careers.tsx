@@ -1,10 +1,40 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { jobOpenings, careersContent } from '../data/content'
 import careerHero from '../assets/career.jpg'
 
+interface JobOpening {
+  id: string
+  title: string
+  department: string
+  location: string
+  type: string
+  description: string
+  deadline: string
+}
+
+const careersContent = {
+  intro: "We're looking for talented individuals who share our vision of building strong, sustainable industries across Africa. Join a team that values impact, growth, and collaboration.",
+  benefits: [
+    { title: "Meaningful Impact", text: "Work on projects that directly contribute to Rwanda's economic growth and development across multiple sectors." },
+    { title: "Professional Growth", text: "We invest in our people through training, mentorship, and opportunities to take on real responsibility early." },
+    { title: "Diverse Teams", text: "Collaborate with professionals across energy, mining, healthcare, technology, and more." },
+    { title: "Competitive Benefits", text: "Enjoy competitive compensation, health coverage, and a supportive, collaborative work environment." },
+  ],
+}
+
 export default function Careers() {
+  const [jobOpenings, setJobOpenings] = useState<JobOpening[]>([])
+  const [loading, setLoading] = useState(true)
   const [activeDepartment, setActiveDepartment] = useState('All')
+
+  useEffect(() => {
+    fetch('http://localhost:3001/api/jobs')
+      .then((res) => res.json())
+      .then((data) => {
+        setJobOpenings(data)
+        setLoading(false)
+      })
+  }, [])
 
   const departments = ['All', ...new Set(jobOpenings.map((job) => job.department))]
 
@@ -16,6 +46,14 @@ export default function Careers() {
   function daysUntil(deadline: string) {
     const diff = new Date(deadline).getTime() - new Date().getTime()
     return Math.ceil(diff / (1000 * 60 * 60 * 24))
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center">
+        <p className="text-gray-500">Loading...</p>
+      </div>
+    )
   }
 
   return (
@@ -35,7 +73,6 @@ export default function Careers() {
   </div>
 </section>
 
-      {/* Why work with us */}
       <section className="min-h-screen w-full flex flex-col items-center justify-center bg-gray-50 px-6">
         <h2 className="text-2xl font-bold text-gray-800 mb-10">Why Work With Us</h2>
         <div className="max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -48,7 +85,6 @@ export default function Careers() {
         </div>
       </section>
 
-      {/* Job listings */}
       <section className="min-h-screen w-full flex flex-col items-center justify-center px-6 py-12">
         <h2 className="text-2xl font-bold text-gray-800 mb-8">Open Positions</h2>
 

@@ -1,11 +1,36 @@
+import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { subsidiaries } from '../data/content'
+
+interface Subsidiary {
+  id: string
+  name: string
+  description: string
+  image: string
+}
 
 export default function SubsidiaryDetail() {
   const { id } = useParams()
-  const subsidiary = subsidiaries.find((sub) => sub.id === id)
+  const [subsidiary, setSubsidiary] = useState<Subsidiary | null>(null)
+  const [loading, setLoading] = useState(true)
 
-  if (!subsidiary) {
+  useEffect(() => {
+    fetch(`http://localhost:3001/api/subsidiaries/${id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setSubsidiary(data)
+        setLoading(false)
+      })
+  }, [id])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center">
+        <p className="text-gray-500">Loading...</p>
+      </div>
+    )
+  }
+
+  if (!subsidiary || (subsidiary as any).error) {
     return (
       <div className="min-h-screen w-full flex flex-col items-center justify-center px-6 text-center">
         <h1 className="text-2xl font-bold text-gray-800">Subsidiary not found</h1>
