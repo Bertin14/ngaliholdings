@@ -17,6 +17,8 @@ import ProtectedRoute from './components/ProtectedRoute'
 import AdminSubsidiaries from './pages/admin/Subsidiaries'
 import AdminBlogs from './pages/admin/Blogs'
 import AdminJobs from './pages/admin/Jobs'
+import AdminContacts from './pages/admin/Contacts'
+import AdminApplications from './pages/admin/Applications'
 
 function App() {
   return (
@@ -44,6 +46,16 @@ function App() {
         <ProtectedRoute>
           <AdminJobs />
       </ProtectedRoute>
+} />
+<Route path="/admin/contacts" element={
+  <ProtectedRoute>
+    <AdminContacts />
+  </ProtectedRoute>
+} />
+<Route path="/admin/applications" element={
+  <ProtectedRoute>
+    <AdminApplications />
+  </ProtectedRoute>
 } />
 
       {/* Public routes - with Navbar/Footer */}
