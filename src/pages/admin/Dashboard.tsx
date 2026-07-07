@@ -17,6 +17,7 @@ export default function AdminDashboard() {
     { title: 'Job Openings', description: 'Post and manage career opportunities', link: '/admin/jobs', color: 'bg-orange-50 border-orange-200' },
     { title: 'Contact Messages', description: 'View messages from the contact form', link: '/admin/contacts', color: 'bg-purple-50 border-purple-200' },
     { title: 'Job Applications', description: 'Review submitted job applications', link: '/admin/applications', color: 'bg-red-50 border-red-200' },
+    { title: 'About Us Page', description: 'Edit background, vision, mission, values and team members', link: '/admin/about', color: 'bg-yellow-50 border-yellow-200' },
   ]
 
   return (

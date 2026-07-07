@@ -8,22 +8,26 @@ interface TeamMember {
   role: string
 }
 
-const aboutContent = {
-  background: "In 2000, the Government of Rwanda developed Vision 2020, aiming to transform Rwanda into a middle-income country. To help realize this goal, a development company called Digitech Solutions was registered in 2010 to execute projects in the energy, IT, and healthcare sectors. In 2012, Digitech Solutions was rebranded and restructured into the investment holding company Ngali Holdings.",
-  vision: "Contribute to the solution of enhancing economic growth in Africa",
-  mission: "With a special focus on Rwanda, invest in businesses that unlock economic potential and eliminate growth barriers in Africa",
-  values: [
-    { title: "Cohesion", text: "Commitment to a stronger, integrated, valuable, efficient economy." },
-    { title: "Diversity", text: "Team diversity provides valuable insight and understanding of the challenges faced by citizens and the industry." },
-    { title: "Talent", text: "Focus on development of people and knowledge to drive business growth." },
-  ],
+interface AboutContent {
+  background: string
+  vision: string
+  mission: string
+}
+
+interface CoreValue {
+  id: number
+  title: string
+  text: string
 }
 
 const aboutHeroImages = [aboutHero1, aboutHero2]
+const API = import.meta.env.VITE_API_URL
 
 export default function About() {
   const [currentAboutSlide, setCurrentAboutSlide] = useState(0)
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([])
+  const [aboutContent, setAboutContent] = useState<AboutContent | null>(null)
+  const [coreValues, setCoreValues] = useState<CoreValue[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -34,12 +38,16 @@ export default function About() {
   }, [])
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/api/team`)
-      .then((res) => res.json())
-      .then((data) => {
-        setTeamMembers(data)
-        setLoading(false)
-      })
+    Promise.all([
+      fetch(`${API}/api/about`).then(r => r.json()),
+      fetch(`${API}/api/values`).then(r => r.json()),
+      fetch(`${API}/api/team`).then(r => r.json()),
+    ]).then(([about, values, team]) => {
+      setAboutContent(about)
+      setCoreValues(values)
+      setTeamMembers(team)
+      setLoading(false)
+    })
   }, [])
 
   if (loading) {
@@ -67,7 +75,7 @@ export default function About() {
       <section className="min-h-screen w-full flex items-center justify-center px-6">
         <div className="max-w-3xl text-center">
           <h2 className="text-xl font-semibold text-gray-800 mb-3">Our Background</h2>
-          <p className="text-gray-600">{aboutContent.background}</p>
+          <p className="text-gray-600">{aboutContent?.background}</p>
         </div>
       </section>
 
@@ -75,11 +83,11 @@ export default function About() {
         <div className="max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-white p-6 rounded-lg">
             <h3 className="font-semibold text-gray-800 mb-2">Our Vision</h3>
-            <p className="text-gray-600">{aboutContent.vision}</p>
+            <p className="text-gray-600">{aboutContent?.vision}</p>
           </div>
           <div className="bg-white p-6 rounded-lg">
             <h3 className="font-semibold text-gray-800 mb-2">Our Mission</h3>
-            <p className="text-gray-600">{aboutContent.mission}</p>
+            <p className="text-gray-600">{aboutContent?.mission}</p>
           </div>
         </div>
       </section>
@@ -87,8 +95,8 @@ export default function About() {
       <section className="min-h-screen w-full flex flex-col items-center justify-center px-6">
         <h2 className="text-xl font-semibold text-gray-800 mb-8">Our Core Values</h2>
         <div className="max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-6">
-          {aboutContent.values.map((value) => (
-            <div key={value.title} className="border border-gray-200 p-5 rounded-lg">
+          {coreValues.map((value) => (
+            <div key={value.id} className="border border-gray-200 p-5 rounded-lg">
               <h4 className="font-semibold text-gray-800 mb-1">{value.title}</h4>
               <p className="text-sm text-gray-600">{value.text}</p>
             </div>
