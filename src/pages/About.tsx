@@ -6,6 +6,7 @@ interface TeamMember {
   id: number
   name: string
   role: string
+  image?: string
 }
 
 interface AboutContent {
@@ -104,17 +105,27 @@ export default function About() {
         </div>
       </section>
 
-      <section className="min-h-screen w-full flex flex-col items-center justify-center bg-gray-50 px-6">
-        <h2 className="text-xl font-semibold text-gray-800 mb-8">Leadership Team</h2>
-        <div className="max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-4">
-          {teamMembers.map((member) => (
-            <div key={member.id} className="bg-white border border-gray-200 p-4 rounded-lg">
-              <p className="font-medium text-gray-800">{member.name}</p>
-              <p className="text-sm text-gray-500">{member.role}</p>
-            </div>
-          ))}
+    <section className="min-h-screen w-full flex flex-col items-center justify-center bg-gray-50 px-6">
+  <h2 className="text-xl font-semibold text-gray-800 mb-8">Leadership Team</h2>
+  <div className="max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-4">
+    {teamMembers.map((member) => (
+      <div key={member.id} className="bg-white border border-gray-200 p-4 rounded-lg flex items-center gap-4">
+        {member.image ? (
+          <img src={member.image} alt={member.name}
+            className="w-16 h-16 rounded-full object-cover flex-shrink-0" />
+        ) : (
+          <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
+            <span className="text-gray-400 text-xl">👤</span>
+          </div>
+        )}
+        <div>
+          <p className="font-medium text-gray-800">{member.name}</p>
+          <p className="text-sm text-gray-500">{member.role}</p>
         </div>
-      </section>
+      </div>
+    ))}
+  </div>
+</section>
     </div>
   )
 }
