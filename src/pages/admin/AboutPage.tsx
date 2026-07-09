@@ -21,6 +21,7 @@ interface TeamMember {
   name: string
   role: string
   image?: string
+  order: number
 }
 
 const API = import.meta.env.VITE_API_URL
@@ -41,7 +42,7 @@ export default function AdminAbout() {
 
   const [showTeamForm, setShowTeamForm] = useState(false)
   const [editingMember, setEditingMember] = useState<TeamMember | null>(null)
-  const [teamForm, setTeamForm] = useState({ name: '', role: '', image: '' })
+  const [teamForm, setTeamForm] = useState({ name: '', role: '', image: '', order: 0 })
 
   const authHeaders = {
     'Content-Type': 'application/json',
@@ -118,7 +119,7 @@ export default function AdminAbout() {
     }
     setShowTeamForm(false)
     setEditingMember(null)
-    setTeamForm({ name: '', role: '', image: '' })
+    setTeamForm({ name: '', role: '', image: '', order: 0 })
     fetchAll()
   }
 
@@ -258,7 +259,7 @@ export default function AdminAbout() {
         <div className="bg-white border border-gray-200 rounded-lg p-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="font-bold text-gray-800 text-lg">Leadership Team ({team.length})</h2>
-            <button onClick={() => { setEditingMember(null); setTeamForm({ name: '', role: '', image: '' }); setShowTeamForm(true) }}
+            <button onClick={() => { setEditingMember(null); setTeamForm({ name: '', role: '', image: '', order: 0 }); setShowTeamForm(true) }}
               className="bg-ngali-orange text-white px-3 py-1.5 rounded text-sm hover:opacity-90">
               + Add Member
             </button>
@@ -277,6 +278,20 @@ export default function AdminAbout() {
                 <input type="text" value={teamForm.role}
                   onChange={(e) => setTeamForm({ ...teamForm, role: e.target.value })}
                   required className="w-full border border-gray-300 rounded px-3 py-2" />
+              </div>
+              <div>
+               <label className="block text-sm font-medium text-gray-700 mb-1">
+                 Display Order
+                 <span className="text-gray-400 font-normal ml-1">(1 = first in list)</span>
+               </label>
+                <input
+                  type="number"
+                  min="1"
+                  value={teamForm.order}
+                  onChange={(e) => setTeamForm({ ...teamForm, order: parseInt(e.target.value) })}
+                  required
+                  className="w-full border border-gray-300 rounded px-3 py-2"
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Photo</label>
@@ -298,28 +313,31 @@ export default function AdminAbout() {
 
           <div className="space-y-2">
             {team.map((member) => (
-              <div key={member.id} className="flex justify-between items-center border-b border-gray-100 pb-2">
-                <div className="flex items-center gap-3">
-                  {member.image && (
-                    <img src={member.image} alt={member.name}
+           <div key={member.id} className="flex justify-between items-center border-b border-gray-100 pb-2">
+            <div className="flex items-center gap-3">
+                <span className="w-6 h-6 rounded-full bg-ngali-orange text-white text-xs flex items-center justify-center font-bold flex-shrink-0">
+                    {member.order}
+                </span>
+                    {member.image && (
+                  <img src={member.image} alt={member.name}
                       className="w-10 h-10 rounded-full object-cover" />
-                  )}
-                  <div>
-                    <p className="font-medium text-gray-800 text-sm">{member.name}</p>
-                    <p className="text-gray-500 text-sm">{member.role}</p>
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <button onClick={() => {
-                    setEditingMember(member)
-                    setTeamForm({ name: member.name, role: member.role, image: member.image ?? '' })
-                    setShowTeamForm(true)
-                  }} className="text-blue-600 text-sm hover:underline">Edit</button>
-                  <button onClick={() => handleDeleteMember(member.id)}
-                    className="text-red-500 text-sm hover:underline">Delete</button>
-                </div>
-              </div>
-            ))}
+            )}
+          <div>
+               <p className="font-medium text-gray-800 text-sm">{member.name}</p>
+               <p className="text-gray-500 text-sm">{member.role}</p>
+          </div>
+          </div>
+          <div className="flex gap-2">
+           <button onClick={() => {
+            setEditingMember(member)
+            setTeamForm({ name: member.name, role: member.role, image: member.image ?? '', order: member.order })
+            setShowTeamForm(true)
+          }} className="text-blue-600 text-sm hover:underline">Edit</button>
+          <button onClick={() => handleDeleteMember(member.id)}
+        className="text-red-500 text-sm hover:underline">Delete</button>
+    </div>
+  </div>
+))}
           </div>
         </div>
 
