@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import ImageUpload from '../../components/ImageUpload'
 
 interface Subsidiary {
   id: string
@@ -127,10 +128,12 @@ export default function AdminSubsidiaries() {
                   required rows={3} className="w-full border border-gray-300 rounded px-3 py-2" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
-                <input type="text" value={form.image}
-                  onChange={(e) => setForm({ ...form, image: e.target.value })}
-                  required className="w-full border border-gray-300 rounded px-3 py-2" />
+               <label className="block text-sm font-medium text-gray-700 mb-1">Image</label>
+               <ImageUpload
+                folder="subsidiaries"
+                currentImage={form.image}
+                onUpload={(url) => setForm({ ...form, image: url })}
+               />
               </div>
               <div className="flex gap-3">
                 <button type="submit"

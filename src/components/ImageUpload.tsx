@@ -1,16 +1,18 @@
 import { useState } from 'react'
-import { useAuth } from '../context/AuthContext'
 
 interface ImageUploadProps {
   onUpload: (url: string) => void
-  folder: string
+  folder?: string
   currentImage?: string
 }
 
+const CLOUD_NAME = 'sx03mfbt'
+const UPLOAD_PRESET = 'ngali_uploads'
+
 export default function ImageUpload({ onUpload, folder, currentImage }: ImageUploadProps) {
-  const { token } = useAuth()
   const [uploading, setUploading] = useState(false)
   const [preview, setPreview] = useState<string | null>(currentImage || null)
+  const [error, setError] = useState<string | null>(null)
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
@@ -21,34 +23,57 @@ export default function ImageUpload({ onUpload, folder, currentImage }: ImageUpl
     reader.onload = (ev) => setPreview(ev.target?.result as string)
     reader.readAsDataURL(file)
 
-    // Upload to Cloudinary via backend
     setUploading(true)
-    const formData = new FormData()
-    formData.append('image', file)
-    formData.append('folder', folder)
+    setError(null)
 
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/upload`, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${token}` },
-      body: formData,
-    })
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('upload_preset', UPLOAD_PRESET)
+      if (folder) formData.append('folder', `ngali-holdings/${folder}`)
 
-    const data = await res.json()
-    setUploading(false)
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+        {
+          method: 'POST',
+          body: formData,
+        }
+      )
 
-    if (data.url) {
-      onUpload(data.url)
+      const data = await res.json()
+
+      if (data.secure_url) {
+        setPreview(data.secure_url)
+        onUpload(data.secure_url)
+      } else {
+        setError('Upload failed — please try again')
+        console.error('Cloudinary error:', data)
+      }
+    } catch (err) {
+      setError('Upload failed — please try again')
+      console.error('Upload error:', err)
     }
+
+    setUploading(false)
   }
 
   return (
     <div className="space-y-2">
       {preview && (
-        <img src={preview} alt="Preview" className="w-24 h-24 object-cover rounded-lg border border-gray-200" />
+        <img
+          src={preview}
+          alt="Preview"
+          className="w-20 h-20 object-cover rounded-lg border border-gray-200"
+        />
       )}
+
       <label className="block">
-        <span className="bg-gray-100 border border-gray-300 text-gray-700 px-3 py-2 rounded text-sm cursor-pointer hover:bg-gray-200 inline-block">
-          {uploading ? 'Uploading...' : 'Choose image'}
+        <span className={`inline-block px-3 py-2 rounded text-sm cursor-pointer border transition ${
+          uploading
+            ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+        }`}>
+          {uploading ? 'Uploading...' : preview ? 'Change image' : 'Choose image'}
         </span>
         <input
           type="file"
@@ -58,7 +83,9 @@ export default function ImageUpload({ onUpload, folder, currentImage }: ImageUpl
           className="hidden"
         />
       </label>
-      {uploading && <p className="text-xs text-gray-500">Uploading to Cloudinary...</p>}
+
+      {error && <p className="text-red-500 text-xs">{error}</p>}
+      {uploading && <p className="text-gray-400 text-xs">Uploading to Cloudinary...</p>}
     </div>
   )
 }

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import ImageUpload from '../../components/ImageUpload'
 
 interface BlogPost {
   id: string
@@ -132,11 +133,13 @@ export default function AdminBlogs() {
                     required className="w-full border border-gray-300 rounded px-3 py-2" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
-                  <input type="text" value={form.image}
-                    onChange={(e) => setForm({ ...form, image: e.target.value })}
-                    required className="w-full border border-gray-300 rounded px-3 py-2" />
-                </div>
+                 <label className="block text-sm font-medium text-gray-700 mb-1">Image</label>
+                 <ImageUpload
+                  folder="blogs"
+                  currentImage={form.image}
+                  onUpload={(url) => setForm({ ...form, image: url })}
+                  />
+               </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Excerpt (short summary)</label>

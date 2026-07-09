@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import ImageUpload from '../../components/ImageUpload'
 
 interface AboutContent {
   id: number
@@ -278,30 +279,13 @@ export default function AdminAbout() {
                   required className="w-full border border-gray-300 rounded px-3 py-2" />
               </div>
               <div>
-  <label className="block text-sm font-medium text-gray-700 mb-1">Photo URL</label>
-  <input
-    type="text"
-    value={teamForm.image}
-    onChange={(e) => setTeamForm({ ...teamForm, image: e.target.value })}
-    placeholder="Paste an image URL here..."
-    className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
-  />
-  {teamForm.image && (
-    <div className="mt-2">
-      <img
-        src={teamForm.image}
-        alt="Preview"
-        className="w-16 h-16 rounded-full object-cover border border-gray-200"
-        onError={(e) => {
-          (e.target as HTMLImageElement).style.display = 'none'
-        }}
-      />
-    </div>
-  )}
-  <p className="text-xs text-gray-400 mt-1">
-    Tip: Upload your image to <a href="https://imgur.com" target="_blank" className="text-blue-500 hover:underline">imgur.com</a> or any image host, then paste the link here.
-  </p>
-</div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Photo</label>
+                 <ImageUpload
+                  folder="team"
+                  currentImage={teamForm.image}
+                  onUpload={(url) => setTeamForm({ ...teamForm, image: url })}
+                  />
+              </div>
               <div className="flex gap-2">
                 <button type="submit" className="bg-ngali-orange text-white px-3 py-1.5 rounded text-sm hover:opacity-90">
                   {editingMember ? 'Save' : 'Add'}
