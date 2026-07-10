@@ -207,7 +207,7 @@ export default function AdminDashboard() {
               <div className="space-y-4">
                 {recentMessages.map((msg) => (
                   <div key={msg.id} className="flex gap-3">
-                    <div className="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold text-sm flex-shrink-0">
+                    <div className="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold text-sm shrink-0">
                       {msg.name.charAt(0)}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -238,7 +238,7 @@ export default function AdminDashboard() {
               <div className="space-y-4">
                 {recentApplications.map((app) => (
                   <div key={app.id} className="flex gap-3">
-                    <div className="w-9 h-9 rounded-full bg-orange-100 flex items-center justify-center text-ngali-orange font-bold text-sm flex-shrink-0">
+                    <div className="w-9 h-9 rounded-full bg-orange-100 flex items-center justify-center text-ngali-orange font-bold text-sm shrink-0">
                       {app.name.charAt(0)}
                     </div>
                     <div className="flex-1 min-w-0">

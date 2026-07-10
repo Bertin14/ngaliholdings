@@ -21,6 +21,14 @@ interface CoreValue {
   text: string
 }
 
+interface BoardMember {
+  id: number
+  name: string
+  role: string
+  image?: string
+  order: number
+}
+
 const aboutHeroImages = [aboutHero1, aboutHero2]
 const API = import.meta.env.VITE_API_URL
 
@@ -29,6 +37,7 @@ export default function About() {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([])
   const [aboutContent, setAboutContent] = useState<AboutContent | null>(null)
   const [coreValues, setCoreValues] = useState<CoreValue[]>([])
+  const [boardMembers, setBoardMembers] = useState<BoardMember[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -38,18 +47,20 @@ export default function About() {
     return () => clearInterval(timer)
   }, [])
 
-  useEffect(() => {
-    Promise.all([
-      fetch(`${API}/api/about`).then(r => r.json()),
-      fetch(`${API}/api/values`).then(r => r.json()),
-      fetch(`${API}/api/team`).then(r => r.json()),
-    ]).then(([about, values, team]) => {
-      setAboutContent(about)
-      setCoreValues(values)
-      setTeamMembers(team)
-      setLoading(false)
-    })
-  }, [])
+ useEffect(() => {
+  Promise.all([
+    fetch(`${API}/api/about`).then(r => r.json()).catch(() => null),
+    fetch(`${API}/api/values`).then(r => r.json()).catch(() => []),
+    fetch(`${API}/api/team`).then(r => r.json()).catch(() => []),
+    fetch(`${API}/api/board`).then(r => r.json()).catch(() => []),
+  ]).then(([about, values, team, board]) => {
+    setAboutContent(about)
+    setCoreValues(values ?? [])
+    setTeamMembers(team ?? [])
+    setBoardMembers(board ?? [])
+    setLoading(false)
+  })
+}, [])
 
   if (loading) {
     return (
@@ -104,28 +115,57 @@ export default function About() {
           ))}
         </div>
       </section>
-
-    <section className="min-h-screen w-full flex flex-col items-center justify-center bg-gray-50 px-6">
-  <h2 className="text-xl font-semibold text-gray-800 mb-8">Leadership Team</h2>
-  <div className="max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-4">
-    {teamMembers.map((member) => (
-      <div key={member.id} className="bg-white border border-gray-200 p-4 rounded-lg flex items-center gap-4">
-        {member.image ? (
-          <img src={member.image} alt={member.name}
-            className="w-16 h-16 rounded-full object-cover flex-shrink-0" />
-        ) : (
-          <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
-            <span className="text-gray-400 text-xl">👤</span>
-          </div>
-        )}
-        <div>
-          <p className="font-medium text-gray-800">{member.name}</p>
-          <p className="text-sm text-gray-500">{member.role}</p>
+      {/* Board Members - portrait style, 4 per row */}
+<section className="min-h-screen w-full flex flex-col items-center justify-center px-6 py-16">
+  <h2 className="text-xl font-semibold text-gray-800 mb-10">Board of Directors</h2>
+  <div className="max-w-5xl grid grid-cols-2 md:grid-cols-4 gap-6">
+    {boardMembers.map((member) => (
+      <div key={member.id} className="flex flex-col items-center text-center">
+        {/* Portrait image - taller than wide */}
+        <div className="w-full aspect-3/4 rounded-lg overflow-hidden mb-3 bg-gray-200">
+          {member.image ? (
+            <img
+              src={member.image}
+              alt={member.name}
+              className="w-full h-full object-cover object-top"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gray-100">
+              <span className="text-4xl text-gray-300">👤</span>
+            </div>
+          )}
         </div>
+        <p className="font-semibold text-gray-800 text-sm">{member.name}</p>
+        <p className="text-gray-500 text-xs mt-0.5">{member.role}</p>
       </div>
     ))}
   </div>
 </section>
+
+  <section className="min-h-screen w-full flex flex-col items-center justify-center bg-gray-50 px-6 py-16">
+   <h2 className="text-xl font-semibold text-gray-800 mb-10">Leadership Team</h2>
+   <div className="max-w-5xl grid grid-cols-2 md:grid-cols-4 gap-6">
+     {teamMembers.map((member) => (
+      <div key={member.id} className="flex flex-col items-center text-center">
+        <div className="w-full aspect-3/4 rounded-lg overflow-hidden mb-3 bg-gray-200">
+          {member.image ? (
+            <img
+              src={member.image}
+              alt={member.name}
+              className="w-full h-full object-cover object-top"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gray-100">
+              <span className="text-4xl text-gray-300">👤</span>
+            </div>
+          )}
+        </div>
+        <p className="font-semibold text-gray-800 text-sm">{member.name}</p>
+        <p className="text-gray-500 text-xs mt-0.5">{member.role}</p>
+      </div>
+     ))}
+   </div>
+ </section>
     </div>
   )
 }
