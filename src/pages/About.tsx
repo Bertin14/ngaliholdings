@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import aboutHero1 from '../assets/About us_1.jpg'
 import aboutHero2 from '../assets/About us_2.jpg'
+import { Link } from 'react-router-dom'
 
 interface TeamMember {
   id: number
@@ -120,7 +121,11 @@ export default function About() {
   <h2 className="text-xl font-semibold text-gray-800 mb-10">Board of Directors</h2>
   <div className="max-w-5xl grid grid-cols-2 md:grid-cols-4 gap-6">
     {boardMembers.map((member) => (
-      <div key={member.id} className="flex flex-col items-center text-center">
+      <Link
+        key={member.id}
+        to={`/member/${member.id}?type=board`}
+        className="flex flex-col items-center text-center hover:opacity-90 transition"
+      > 
         {/* Portrait image - taller than wide */}
         <div className="w-full aspect-3/4 rounded-lg overflow-hidden mb-3 bg-gray-200">
           {member.image ? (
@@ -137,7 +142,8 @@ export default function About() {
         </div>
         <p className="font-semibold text-gray-800 text-sm">{member.name}</p>
         <p className="text-gray-500 text-xs mt-0.5">{member.role}</p>
-      </div>
+        <span className="text-ngali-orange text-xs mt-1 hover:underline">View profile →</span>
+      </Link>
     ))}
   </div>
 </section>
@@ -146,24 +152,26 @@ export default function About() {
    <h2 className="text-xl font-semibold text-gray-800 mb-10">Leadership Team</h2>
    <div className="max-w-5xl grid grid-cols-2 md:grid-cols-4 gap-6">
      {teamMembers.map((member) => (
-      <div key={member.id} className="flex flex-col items-center text-center">
-        <div className="w-full aspect-3/4 rounded-lg overflow-hidden mb-3 bg-gray-200">
-          {member.image ? (
-            <img
-              src={member.image}
-              alt={member.name}
-              className="w-full h-full object-cover object-top"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gray-100">
-              <span className="text-4xl text-gray-300">👤</span>
-            </div>
-          )}
+  <Link
+  key={member.id}
+  to={`/member/${member.id}?type=team`}
+  className="flex flex-col items-center text-center hover:opacity-90 transition"
+>
+    <div className="w-full aspect-3/4 rounded-lg overflow-hidden mb-3 bg-gray-200">
+      {member.image ? (
+        <img src={member.image} alt={member.name}
+          className="w-full h-full object-cover object-top" />
+      ) : (
+        <div className="w-full h-full flex items-center justify-center bg-gray-100">
+          <span className="text-4xl text-gray-300">👤</span>
         </div>
-        <p className="font-semibold text-gray-800 text-sm">{member.name}</p>
-        <p className="text-gray-500 text-xs mt-0.5">{member.role}</p>
-      </div>
-     ))}
+      )}
+    </div>
+    <p className="font-semibold text-gray-800 text-sm">{member.name}</p>
+    <p className="text-gray-500 text-xs mt-0.5">{member.role}</p>
+    <span className="text-ngali-orange text-xs mt-1 hover:underline">View profile →</span>
+  </Link>
+))}
    </div>
  </section>
     </div>

@@ -21,6 +21,7 @@ interface TeamMember {
   name: string
   role: string
   image?: string
+  cv:      string
   order: number
 }
 interface BoardMember {
@@ -28,6 +29,7 @@ interface BoardMember {
   name: string
   role: string
   image?: string
+  cv:     string
   order: number
 }
 
@@ -50,11 +52,11 @@ export default function AdminAbout() {
   const [board, setBoard] = useState<BoardMember[]>([])
   const [showBoardForm, setShowBoardForm] = useState(false)
   const [editingBoardMember, setEditingBoardMember] = useState<BoardMember | null>(null)
-  const [boardForm, setBoardForm] = useState({ name: '', role: '', image: '', order: 0 })
+  const [boardForm, setBoardForm] = useState({ name: '', role: '', image: '', order: 0, cv: '' })
 
   const [showTeamForm, setShowTeamForm] = useState(false)
   const [editingMember, setEditingMember] = useState<TeamMember | null>(null)
-  const [teamForm, setTeamForm] = useState({ name: '', role: '', image: '', order: 0 })
+  const [teamForm, setTeamForm] = useState({ name: '', role: '', image: '', order: 0, cv: '' })
 
   const authHeaders = {
     'Content-Type': 'application/json',
@@ -132,7 +134,7 @@ export default function AdminAbout() {
   }
   setShowBoardForm(false)
   setEditingBoardMember(null)
-  setBoardForm({ name: '', role: '', image: '', order: 0 })
+  setBoardForm({ name: '', role: '', image: '', order: 0, cv: '' })
   fetchAll()
 }
 
@@ -159,7 +161,7 @@ async function handleDeleteBoardMember(id: number) {
     }
     setShowTeamForm(false)
     setEditingMember(null)
-    setTeamForm({ name: '', role: '', image: '', order: 0 })
+    setTeamForm({ name: '', role: '', image: '', order: 0, cv: ''})
     fetchAll()
   }
 
@@ -298,7 +300,7 @@ async function handleDeleteBoardMember(id: number) {
 <div className="bg-white border border-gray-200 rounded-lg p-6">
   <div className="flex justify-between items-center mb-4">
     <h2 className="font-bold text-gray-800 text-lg">Board of Directors ({board.length})</h2>
-    <button onClick={() => { setEditingBoardMember(null); setBoardForm({ name: '', role: '', image: '', order: 0 }); setShowBoardForm(true) }}
+    <button onClick={() => { setEditingBoardMember(null); setBoardForm({ name: '', role: '', image: '', order: 0,cv: '' }); setShowBoardForm(true) }}
       className="bg-ngali-orange text-white px-3 py-1.5 rounded text-sm hover:opacity-90">
       + Add Member
     </button>
@@ -319,6 +321,16 @@ async function handleDeleteBoardMember(id: number) {
             onChange={(e) => setBoardForm({ ...boardForm, role: e.target.value })}
             required className="w-full border border-gray-300 rounded px-3 py-2" />
         </div>
+<div>
+  <label className="block text-sm font-medium text-gray-700 mb-1">CV / Experience</label>
+  <textarea
+    value={boardForm.cv}
+    onChange={(e) => setBoardForm({ ...boardForm, cv: e.target.value })}
+    rows={6}
+    placeholder="Education, work experience, achievements..."
+    className="w-full border border-gray-300 rounded px-3 py-2"
+  />
+</div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Display Order
@@ -371,7 +383,7 @@ async function handleDeleteBoardMember(id: number) {
         <div className="flex justify-center gap-2 mt-1">
           <button onClick={() => {
             setEditingBoardMember(member)
-            setBoardForm({ name: member.name, role: member.role, image: member.image ?? '', order: member.order })
+            setBoardForm({ name: member.name, role: member.role, image: member.image ?? '', order: member.order, cv:member.cv })
             setShowBoardForm(true)
           }} className="text-blue-600 text-xs hover:underline">Edit</button>
           <button onClick={() => handleDeleteBoardMember(member.id)}
@@ -386,7 +398,7 @@ async function handleDeleteBoardMember(id: number) {
         <div className="bg-white border border-gray-200 rounded-lg p-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="font-bold text-gray-800 text-lg">Leadership Team ({team.length})</h2>
-            <button onClick={() => { setEditingMember(null); setTeamForm({ name: '', role: '', image: '', order: 0 }); setShowTeamForm(true) }}
+            <button onClick={() => { setEditingMember(null); setTeamForm({ name: '', role: '', image: '', order: 0, cv: '' }); setShowTeamForm(true) }}
               className="bg-ngali-orange text-white px-3 py-1.5 rounded text-sm hover:opacity-90">
               + Add Member
             </button>
@@ -406,39 +418,49 @@ async function handleDeleteBoardMember(id: number) {
                   onChange={(e) => setTeamForm({ ...teamForm, role: e.target.value })}
                   required className="w-full border border-gray-300 rounded px-3 py-2" />
               </div>
-              <div>
-               <label className="block text-sm font-medium text-gray-700 mb-1">
-                 Display Order
-                 <span className="text-gray-400 font-normal ml-1">(1 = first in list)</span>
-               </label>
-                <input
-                  type="number"
-                  min="1"
-                  value={teamForm.order}
-                  onChange={(e) => setTeamForm({ ...teamForm, order: parseInt(e.target.value) })}
-                  required
-                  className="w-full border border-gray-300 rounded px-3 py-2"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Photo</label>
-                 <ImageUpload
-                  folder="team"
-                  currentImage={teamForm.image}
-                  onUpload={(url) => setTeamForm({ ...teamForm, image: url })}
-                  />
-              </div>
-              <div className="flex gap-2">
-                <button type="submit" className="bg-ngali-orange text-white px-3 py-1.5 rounded text-sm hover:opacity-90">
-                  {editingMember ? 'Save' : 'Add'}
-                </button>
-                <button type="button" onClick={() => setShowTeamForm(false)}
-                  className="bg-gray-200 text-gray-700 px-3 py-1.5 rounded text-sm">Cancel</button>
-              </div>
-            </form>
-          )}
+<div>
+  <label className="block text-sm font-medium text-gray-700 mb-1">CV / Experience</label>
+  <textarea
+    value={teamForm.cv}
+    onChange={(e) => setTeamForm({ ...teamForm, cv: e.target.value })}
+    rows={6}
+    placeholder="Education, work experience, achievements..."
+    className="w-full border border-gray-300 rounded px-3 py-2"
+  />
+</div>
+<div>
+ <label className="block text-sm font-medium text-gray-700 mb-1">
+        Display Order
+   <span className="text-gray-400 font-normal ml-1">(1 = first in list)</span>
+  </label>
+    <input
+      type="number"
+      min="1"
+      value={teamForm.order}
+      onChange={(e) => setTeamForm({ ...teamForm, order: parseInt(e.target.value) })}
+      required
+      className="w-full border border-gray-300 rounded px-3 py-2"
+    />
+</div>
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-1">Photo</label>
+      <ImageUpload
+        folder="team"
+        currentImage={teamForm.image}
+        onUpload={(url) => setTeamForm({ ...teamForm, image: url })}
+     />
+  </div>
+  <div className="flex gap-2">
+    <button type="submit" className="bg-ngali-orange text-white px-3 py-1.5 rounded text-sm hover:opacity-90">
+     {editingMember ? 'Save' : 'Add'}
+    </button>
+    <button type="button" onClick={() => setShowTeamForm(false)}
+      className="bg-gray-200 text-gray-700 px-3 py-1.5 rounded text-sm">Cancel</button>
+  </div>
+</form>
+      )}
 
-          <div className="space-y-2">
+  <div className="space-y-2">
             {team.map((member) => (
            <div key={member.id} className="flex justify-between items-center border-b border-gray-100 pb-2">
             <div className="flex items-center gap-3">
@@ -457,7 +479,7 @@ async function handleDeleteBoardMember(id: number) {
           <div className="flex gap-2">
            <button onClick={() => {
             setEditingMember(member)
-            setTeamForm({ name: member.name, role: member.role, image: member.image ?? '', order: member.order })
+            setTeamForm({ name: member.name, role: member.role, image: member.image ?? '', order: member.order, cv: member.cv })
             setShowTeamForm(true)
           }} className="text-blue-600 text-sm hover:underline">Edit</button>
           <button onClick={() => handleDeleteMember(member.id)}

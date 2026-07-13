@@ -20,6 +20,7 @@ import AdminJobs from './pages/admin/Jobs'
 import AdminContacts from './pages/admin/Contacts'
 import AdminApplications from './pages/admin/Applications'
 import AdminAbout from './pages/admin/AboutPage'
+import MemberDetail from './pages/MemberDetail'
 
 function App() {
   return (
@@ -79,6 +80,7 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/careers" element={<Careers />} />
             <Route path="/careers/:id" element={<JobDetail />} />
+            <Route path="/member/:id" element={<MemberDetail />} />
           </Routes>
           <Footer />
         </>
