@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import ImageUpload from '../../components/ImageUpload'
+import AdminLayout from '../../components/AdminLayout'
 
 interface AboutContent {
   id: number
@@ -36,7 +36,7 @@ interface BoardMember {
 const API = import.meta.env.VITE_API_URL
 
 export default function AdminAbout() {
-  const { token, logout } = useAuth()
+  const { token } = useAuth()
   const [about, setAbout] = useState<AboutContent | null>(null)
   const [values, setValues] = useState<CoreValue[]>([])
   const [team, setTeam] = useState<TeamMember[]>([])
@@ -178,17 +178,7 @@ async function handleDeleteBoardMember(id: number) {
   )
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-ngali-black text-white px-6 py-4 flex justify-between items-center">
-        <div className="flex items-center gap-4">
-          <Link to="/admin" className="text-gray-300 hover:text-white text-sm">← Dashboard</Link>
-          <h1 className="font-bold text-lg">About Us Page</h1>
-        </div>
-        <button onClick={() => { logout(); window.location.href = '/admin/login' }}
-          className="bg-ngali-orange px-4 py-1.5 rounded text-sm hover:opacity-90">
-          Sign out
-        </button>
-      </nav>
+    <AdminLayout>
 
       <div className="max-w-4xl mx-auto px-6 py-8 space-y-8">
 
@@ -491,6 +481,6 @@ async function handleDeleteBoardMember(id: number) {
         </div>
 
       </div>
-    </div>
+    </AdminLayout>
   )
 }

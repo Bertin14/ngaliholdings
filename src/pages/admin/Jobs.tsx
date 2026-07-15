@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import AdminLayout from '../../components/AdminLayout'
 
 interface JobOpening {
   id: string
@@ -15,7 +15,7 @@ interface JobOpening {
 const API = import.meta.env.VITE_API_URL
 
 export default function AdminJobs() {
-  const { token, logout } = useAuth()
+  const { token} = useAuth()
   const [jobs, setJobs] = useState<JobOpening[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
@@ -79,18 +79,8 @@ export default function AdminJobs() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-ngali-black text-white px-6 py-4 flex justify-between items-center">
-        <div className="flex items-center gap-4">
-          <Link to="/admin" className="text-gray-300 hover:text-white text-sm">← Dashboard</Link>
-          <h1 className="font-bold text-lg">Job Openings</h1>
-        </div>
-        <button onClick={() => { logout(); window.location.href = '/admin/login' }}
-          className="bg-ngali-orange px-4 py-1.5 rounded text-sm hover:opacity-90">
-          Sign out
-        </button>
-      </nav>
-
+    
+<AdminLayout>
       <div className="max-w-5xl mx-auto px-6 py-8">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-bold text-gray-800">All Jobs ({jobs.length})</h2>
@@ -185,6 +175,6 @@ export default function AdminJobs() {
           </div>
         )}
       </div>
-    </div>
+    </AdminLayout>
   )
 }

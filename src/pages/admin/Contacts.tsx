@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import AdminLayout from '../../components/AdminLayout'
 
 interface ContactMessage {
   id: number
@@ -13,7 +13,7 @@ interface ContactMessage {
 const API = import.meta.env.VITE_API_URL
 
 export default function AdminContacts() {
-  const { token, logout } = useAuth()
+  const { token } = useAuth()
   const [messages, setMessages] = useState<ContactMessage[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -43,17 +43,7 @@ export default function AdminContacts() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-ngali-black text-white px-6 py-4 flex justify-between items-center">
-        <div className="flex items-center gap-4">
-          <Link to="/admin" className="text-gray-300 hover:text-white text-sm">← Dashboard</Link>
-          <h1 className="font-bold text-lg">Contact Messages</h1>
-        </div>
-        <button onClick={() => { logout(); window.location.href = '/admin/login' }}
-          className="bg-ngali-orange px-4 py-1.5 rounded text-sm hover:opacity-90">
-          Sign out
-        </button>
-      </nav>
+    <AdminLayout>
 
       <div className="max-w-5xl mx-auto px-6 py-8">
         <h2 className="text-xl font-bold text-gray-800 mb-6">
@@ -92,6 +82,6 @@ export default function AdminContacts() {
           </div>
         )}
       </div>
-    </div>
+      </AdminLayout>
   )
 }
