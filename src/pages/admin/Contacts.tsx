@@ -16,7 +16,10 @@ export default function AdminContacts() {
   const { token } = useAuth()
   const [messages, setMessages] = useState<ContactMessage[]>([])
   const [loading, setLoading] = useState(true)
-
+  const [replyingTo, setReplyingTo] = useState<number | null>(null)
+  const [replyText, setReplyText] = useState('')
+  const [replying, setReplying] = useState(false)
+  const [replySuccess, setReplySuccess] = useState<number | null>(null)
   const authHeaders = {
     'Content-Type': 'application/json',
     Authorization: `Bearer ${token}`,
@@ -32,6 +35,22 @@ export default function AdminContacts() {
     setMessages(data)
     setLoading(false)
   }
+
+  async function handleReply(id: number) {
+  setReplying(true)
+  const res = await fetch(`${API}/api/admin/contacts/${id}/reply`, {
+    method: 'POST',
+    headers: authHeaders,
+    body: JSON.stringify({ replyMessage: replyText }),
+  })
+
+  if (res.ok) {
+    setReplySuccess(id)
+    setReplyingTo(null)
+    setReplyText('')
+  }
+  setReplying(false)
+}
 
   async function handleDelete(id: number) {
     if (!confirm('Delete this message?')) return
@@ -57,28 +76,66 @@ export default function AdminContacts() {
         ) : (
           <div className="space-y-4">
             {messages.map((msg) => (
-              <div key={msg.id} className="bg-white border border-gray-200 rounded-lg p-5">
-                <div className="flex justify-between items-start mb-3">
-                  <div>
-                    <p className="font-medium text-gray-800">{msg.name}</p>
-                    <p className="text-sm text-gray-500">{msg.email}</p>
-                    <p className="text-xs text-gray-400 mt-0.5">
-                      {new Date(msg.createdAt).toLocaleDateString('en-US', {
-                        year: 'numeric', month: 'long', day: 'numeric',
-                        hour: '2-digit', minute: '2-digit'
-                      })}
-                    </p>
-                  </div>
-                  <button onClick={() => handleDelete(msg.id)}
-                    className="text-red-500 text-sm hover:underline">
-                    Delete
-                  </button>
-                </div>
-                <p className="text-gray-700 text-sm bg-gray-50 rounded p-3">
-                  {msg.message}
-                </p>
-              </div>
-            ))}
+  <div key={msg.id} className="bg-white border border-gray-200 rounded-lg p-5">
+    <div className="flex justify-between items-start mb-3">
+      <div>
+        <p className="font-medium text-gray-800">{msg.name}</p>
+        <p className="text-sm text-gray-500">{msg.email}</p>
+        <p className="text-xs text-gray-400 mt-0.5">
+          {new Date(msg.createdAt).toLocaleDateString('en-US', {
+            year: 'numeric', month: 'long', day: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+          })}
+        </p>
+      </div>
+      <div className="flex gap-2">
+        <button
+          onClick={() => {
+            setReplyingTo(replyingTo === msg.id ? null : msg.id)
+            setReplyText('')
+          }}
+          className="text-ngali-orange text-sm hover:underline"
+        >
+          {replyingTo === msg.id ? 'Cancel' : 'Reply'}
+        </button>
+        <button onClick={() => handleDelete(msg.id)}
+          className="text-red-500 text-sm hover:underline">
+          Delete
+        </button>
+      </div>
+    </div>
+
+    <p className="text-gray-700 text-sm bg-gray-50 rounded p-3 mb-3">
+      {msg.message}
+    </p>
+
+    {replySuccess === msg.id && (
+      <p className="text-green-600 text-sm mb-3">✓ Reply sent successfully</p>
+    )}
+
+    {replyingTo === msg.id && (
+      <div className="border-t border-gray-100 pt-3">
+        <p className="text-sm font-medium text-gray-700 mb-2">
+          Reply to {msg.name} ({msg.email}):
+        </p>
+        <textarea
+          value={replyText}
+          onChange={(e) => setReplyText(e.target.value)}
+          rows={4}
+          placeholder="Type your reply..."
+          className="w-full border border-gray-300 rounded px-3 py-2 text-sm mb-2"
+        />
+        <button
+          onClick={() => handleReply(msg.id)}
+          disabled={replying || !replyText.trim()}
+          className="bg-ngali-orange text-white px-4 py-2 rounded text-sm hover:opacity-90 disabled:opacity-50"
+        >
+          {replying ? 'Sending...' : 'Send Reply'}
+        </button>
+      </div>
+    )}
+  </div>
+))}
           </div>
         )}
       </div>
