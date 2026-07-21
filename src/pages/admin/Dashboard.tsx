@@ -21,7 +21,8 @@ interface RecentMessage {
 
 interface RecentApplication {
   id: number
-  name: string
+  firstName: string   // was: name: string
+  lastName: string    // new
   email: string
   jobId: string
   createdAt: string
@@ -153,11 +154,11 @@ export default function AdminDashboard() {
               {recentApplications.map((app) => (
                 <div key={app.id} className="flex gap-3">
                   <div className="w-9 h-9 rounded-full bg-orange-100 flex items-center justify-center text-ngali-orange font-bold text-sm shrink-0">
-                    {app.name.charAt(0)}
+                    {app.firstName?.charAt(0)}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between">
-                      <p className="font-medium text-gray-800 text-sm">{app.name}</p>
+                      <p className="font-medium text-gray-800 text-sm">{app.firstName} {app.lastName}</p>
                       <p className="text-xs text-gray-400">{new Date(app.createdAt).toLocaleDateString()}</p>
                     </div>
                     <p className="text-xs text-gray-500">{app.email}</p>

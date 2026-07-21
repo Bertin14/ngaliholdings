@@ -5,9 +5,19 @@ import AdminLayout from '../../components/AdminLayout'
 interface JobApplication {
   id: number
   jobId: string
-  name: string
+  firstName: string
+  lastName: string
   email: string
+  phone: string
+  dateOfBirth: string
+  gender: string
+  nationality: string
+  citizenship: string
   coverLetter: string
+  cvUrl?: string
+  coverLetterUrl?: string
+  degreeUrl?: string
+  certificatesUrl?: string
   createdAt: string
 }
 
@@ -77,70 +87,99 @@ export default function AdminApplications() {
           <p className="text-gray-500">No applications yet.</p>
         ) : (
           <div className="space-y-4">
-             {applications.map((app) => (
+              {applications.map((app) => (
   <div key={app.id} className="bg-white border border-gray-200 rounded-lg p-5">
-    <div className="flex justify-between items-start mb-2">
+    <div className="flex justify-between items-start mb-3">
       <div>
-        <p className="font-medium text-gray-800">{app.name}</p>
-        <p className="text-sm text-gray-500">{app.email}</p>
-        <p className="text-xs text-ngali-orange mt-0.5">
-          Applied for: {app.jobId}
-        </p>
-        <p className="text-xs text-gray-400">
-          {new Date(app.createdAt).toLocaleDateString('en-US', {
-            year: 'numeric', month: 'long', day: 'numeric'
-          })}
-        </p>
+        <p className="font-medium text-gray-800">{app.firstName} {app.lastName}</p>
+        <p className="text-sm text-gray-500">{app.email} · {app.phone}</p>
+        <p className="text-xs text-ngali-orange mt-0.5">Applied for: {app.jobId}</p>
+        <div className="flex gap-3 text-xs text-gray-400 mt-1">
+          <span>{app.gender}</span>
+          <span>·</span>
+          <span>{app.nationality}</span>
+          <span>·</span>
+          <span>DOB: {app.dateOfBirth}</span>
+        </div>
       </div>
-      <div className="flex gap-3">
-        <button
-          onClick={() => setExpanded(expanded === app.id ? null : app.id)}
-          className="text-blue-600 text-sm hover:underline">
-          {expanded === app.id ? 'Hide letter' : 'Read letter'}
-        </button>
-        <button
-          onClick={() => {
+      <div className="flex flex-col gap-1 items-end">
+        <p className="text-xs text-gray-400">
+          {new Date(app.createdAt).toLocaleDateString()}
+        </p>
+        <div className="flex gap-2">
+          <button onClick={() => setExpanded(expanded === app.id ? null : app.id)}
+            className="text-blue-600 text-sm hover:underline">
+            {expanded === app.id ? 'Hide' : 'Details'}
+          </button>
+          <button onClick={() => {
             setReplyingTo(replyingTo === app.id ? null : app.id)
             setReplyText('')
-          }}
-          className="text-ngali-orange text-sm hover:underline">
-          {replyingTo === app.id ? 'Cancel' : 'Reply'}
-        </button>
-        <button onClick={() => handleDelete(app.id)}
-          className="text-red-500 text-sm hover:underline">
-          Delete
-        </button>
+          }} className="text-ngali-orange text-sm hover:underline">
+            {replyingTo === app.id ? 'Cancel' : 'Reply'}
+          </button>
+          <button onClick={() => handleDelete(app.id)}
+            className="text-red-500 text-sm hover:underline">Delete</button>
+        </div>
       </div>
     </div>
 
     {expanded === app.id && (
-      <div className="mt-3 bg-gray-50 rounded p-3 text-sm text-gray-700 mb-3">
-        <p className="font-medium text-gray-600 mb-1">Cover Letter:</p>
-        {app.coverLetter}
+      <div className="mt-3 space-y-3">
+        {/* Documents */}
+        <div className="bg-gray-50 rounded-lg p-3">
+          <p className="text-xs font-medium text-gray-600 uppercase mb-2">Documents</p>
+          <div className="flex flex-wrap gap-2">
+            {app.cvUrl && (
+              <a href={app.cvUrl} target="_blank"
+                className="text-xs bg-blue-50 text-blue-700 px-3 py-1.5 rounded-full hover:bg-blue-100">
+                📄 View CV
+              </a>
+            )}
+            {app.degreeUrl && (
+              <a href={app.degreeUrl} target="_blank"
+                className="text-xs bg-green-50 text-green-700 px-3 py-1.5 rounded-full hover:bg-green-100">
+                🎓 View Degree
+              </a>
+            )}
+            {app.coverLetterUrl && (
+              <a href={app.coverLetterUrl} target="_blank"
+                className="text-xs bg-purple-50 text-purple-700 px-3 py-1.5 rounded-full hover:bg-purple-100">
+                📝 Cover Letter Doc
+              </a>
+            )}
+            {app.certificatesUrl && (
+              <a href={app.certificatesUrl} target="_blank"
+                className="text-xs bg-orange-50 text-orange-700 px-3 py-1.5 rounded-full hover:bg-orange-100">
+                🏆 Certificates
+              </a>
+            )}
+          </div>
+        </div>
+
+        {/* Cover letter text */}
+        <div className="bg-gray-50 rounded-lg p-3">
+          <p className="text-xs font-medium text-gray-600 uppercase mb-2">Cover Letter</p>
+          <p className="text-sm text-gray-700">{app.coverLetter}</p>
+        </div>
       </div>
     )}
 
     {replySuccess === app.id && (
-      <p className="text-green-600 text-sm mb-3">✓ Reply sent successfully</p>
+      <p className="text-green-600 text-sm mt-3">✓ Reply sent successfully</p>
     )}
 
     {replyingTo === app.id && (
       <div className="border-t border-gray-100 pt-3 mt-3">
         <p className="text-sm font-medium text-gray-700 mb-2">
-          Reply to {app.name} ({app.email}):
+          Reply to {app.firstName} {app.lastName} ({app.email}):
         </p>
-        <textarea
-          value={replyText}
+        <textarea value={replyText}
           onChange={(e) => setReplyText(e.target.value)}
-          rows={4}
-          placeholder="Type your reply to the applicant..."
-          className="w-full border border-gray-300 rounded px-3 py-2 text-sm mb-2"
-        />
-        <button
-          onClick={() => handleReply(app.id)}
+          rows={4} placeholder="Type your reply..."
+          className="w-full border border-gray-300 rounded px-3 py-2 text-sm mb-2" />
+        <button onClick={() => handleReply(app.id)}
           disabled={replying || !replyText.trim()}
-          className="bg-ngali-orange text-white px-4 py-2 rounded text-sm hover:opacity-90 disabled:opacity-50"
-        >
+          className="bg-ngali-orange text-white px-4 py-2 rounded text-sm hover:opacity-90 disabled:opacity-50">
           {replying ? 'Sending...' : 'Send Reply'}
         </button>
       </div>
