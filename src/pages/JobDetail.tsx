@@ -223,10 +223,15 @@ export default function JobDetail() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Date of Birth *</label>
-                    <input type="date" value={formData.dateOfBirth}
-                      onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
-                      required
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:outline-none focus:border-ngali-orange" />
+                      <input
+                       type="date"
+                       value={formData.dateOfBirth}
+                       onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
+                       required
+                       max={new Date(new Date().getFullYear() - 18, 11, 31).toISOString().split('T')[0]}
+                       min="1940-01-01"
+                       className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:outline-none focus:border-ngali-orange"
+                      />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Gender *</label>
@@ -368,41 +373,78 @@ export default function JobDetail() {
               </div>
             )}
 
-            {/* Step 3: Cover Letter */}
+            {/* Step 3: Cover Letter Upload */}
             {currentStep === 3 && (
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <h3 className="font-semibold text-gray-800 text-lg mb-2">Cover Letter *</h3>
-                <p className="text-sm text-gray-500 mb-4">
-                  Tell us why you're the right person for this role. What makes you stand out?
-                </p>
-                <textarea
-                  value={formData.coverLetter}
-                  onChange={(e) => setFormData({ ...formData, coverLetter: e.target.value })}
-                  required rows={8}
-                  placeholder="Dear Hiring Manager,&#10;&#10;I am writing to express my interest in the position of..."
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:outline-none focus:border-ngali-orange resize-none"
-                />
-                <p className="text-xs text-gray-400 mt-1">{formData.coverLetter.length} characters</p>
+    <div className="bg-white rounded-xl shadow-sm p-6 space-y-5">
+    <h3 className="font-semibold text-gray-800 text-lg mb-2">Cover Letter</h3>
+    <p className="text-sm text-gray-500 mb-4">
+      Upload your cover letter document. Accepted formats: PDF, DOC, DOCX.
+    </p>
 
-                <div className="flex justify-between mt-6">
-                  <button type="button" onClick={() => setCurrentStep(2)}
-                    className="text-gray-600 px-6 py-2.5 rounded-lg border border-gray-300 hover:bg-gray-50">
-                    ← Back
-                  </button>
-                  <button type="button"
-                    onClick={() => {
-                      if (!formData.coverLetter.trim()) {
-                        alert('Please write a cover letter')
-                        return
-                      }
-                      setCurrentStep(4)
-                    }}
-                    className="bg-ngali-orange text-white px-6 py-2.5 rounded-lg hover:opacity-90 font-medium">
-                    Next: Review →
-                  </button>
-                </div>
-              </div>
-            )}
+    <div className="border border-gray-200 rounded-lg p-4">
+      <label className="block text-sm font-medium text-gray-700 mb-2">
+        Cover Letter Document *
+      </label>
+      {formData.coverLetterUrl ? (
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 bg-green-50 text-green-700 px-3 py-2 rounded-lg text-sm flex-1">
+            <span>✓</span>
+            <span>Cover letter uploaded successfully</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setFormData(prev => ({ ...prev, coverLetterUrl: '' }))}
+            className="text-red-500 text-sm hover:underline"
+          >
+            Remove
+          </button>
+        </div>
+      ) : (
+        <label className="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-gray-300 rounded-lg p-8 cursor-pointer hover:border-ngali-orange transition">
+          {uploading.coverLetter ? (
+            <span className="text-gray-500 text-sm">Uploading...</span>
+          ) : (
+            <>
+              <span className="text-4xl">📝</span>
+              <span className="text-sm text-gray-500">Click to upload your cover letter</span>
+              <span className="text-xs text-gray-400">PDF, DOC, DOCX up to 10MB</span>
+            </>
+          )}
+          <input
+            type="file"
+            accept=".pdf,.doc,.docx"
+            className="hidden"
+            disabled={uploading.coverLetter}
+            onChange={(e) => {
+              const file = e.target.files?.[0]
+              if (file) handleFileUpload(file, 'coverLetterUrl', 'coverLetter')
+            }}
+          />
+        </label>
+      )}
+    </div>
+
+    <div className="flex justify-between mt-6">
+      <button type="button" onClick={() => setCurrentStep(2)}
+        className="text-gray-600 px-6 py-2.5 rounded-lg border border-gray-300 hover:bg-gray-50">
+        ← Back
+      </button>
+      <button
+        type="button"
+        onClick={() => {
+          if (!formData.coverLetterUrl) {
+            alert('Please upload your cover letter')
+            return
+          }
+          setCurrentStep(4)
+        }}
+        className="bg-ngali-orange text-white px-6 py-2.5 rounded-lg hover:opacity-90 font-medium">
+        Next: Review →
+      </button>
+    </div>
+  </div>
+)}
+            
 
             {/* Step 4: Review */}
             {currentStep === 4 && (
@@ -453,9 +495,12 @@ export default function JobDetail() {
                     </div>
                   </div>
 
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <h4 className="font-medium text-gray-700 mb-2 text-sm uppercase tracking-wide">Cover Letter Preview</h4>
-                    <p className="text-sm text-gray-600 line-clamp-3">{formData.coverLetter}</p>
+            <div className="bg-gray-50 rounded-lg p-4">
+                   <h4 className="font-medium text-gray-700 mb-2 text-sm uppercase tracking-wide">Cover Letter</h4>
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="text-green-600">✓</span>
+                      <span>Cover letter document uploaded</span>
+            </div>
                   </div>
                 </div>
 
