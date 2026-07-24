@@ -106,20 +106,23 @@ export default function AdminApplications() {
         <p className="text-xs text-gray-400">
           {new Date(app.createdAt).toLocaleDateString()}
         </p>
-        <div className="flex gap-2">
-          <button onClick={() => setExpanded(expanded === app.id ? null : app.id)}
-            className="text-blue-600 text-sm hover:underline">
-            {expanded === app.id ? 'Hide' : 'Details'}
-          </button>
+       <div className="flex gap-2">
+         <button onClick={() => setExpanded(expanded === app.id ? null : app.id)}
+           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 text-xs font-medium transition">
+           👁️ {expanded === app.id ? 'Hide' : 'Details'}
+         </button>
           <button onClick={() => {
             setReplyingTo(replyingTo === app.id ? null : app.id)
             setReplyText('')
-          }} className="text-ngali-orange text-sm hover:underline">
-            {replyingTo === app.id ? 'Cancel' : 'Reply'}
+           }}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-ngali-orange text-white hover:opacity-90 text-xs font-medium transition">
+            ↩️ {replyingTo === app.id ? 'Cancel' : 'Reply'}
           </button>
           <button onClick={() => handleDelete(app.id)}
-            className="text-red-500 text-sm hover:underline">Delete</button>
-        </div>
+           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 text-xs font-medium transition">
+           🗑️ Delete
+          </button>
+       </div>
       </div>
     </div>
 

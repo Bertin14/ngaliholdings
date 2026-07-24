@@ -187,8 +187,8 @@ async function handleDeleteBoardMember(id: number) {
           <div className="flex justify-between items-center mb-4">
             <h2 className="font-bold text-gray-800 text-lg">Background, Vision & Mission</h2>
             <button onClick={() => setEditingAbout(!editingAbout)}
-              className="text-blue-600 text-sm hover:underline">
-              {editingAbout ? 'Cancel' : 'Edit'}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 text-xs font-medium transition">
+              {editingAbout ? 'Cancel' : '✏️ Edit'}
             </button>
           </div>
 
@@ -278,9 +278,9 @@ async function handleDeleteBoardMember(id: number) {
                 </div>
                 <div className="flex gap-2 ml-4">
                   <button onClick={() => { setEditingValue(value); setValueForm({ title: value.title, text: value.text }); setShowValueForm(true) }}
-                    className="text-blue-600 text-sm hover:underline">Edit</button>
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 text-xs font-medium transition">✏️ Edit</button>
                   <button onClick={() => handleDeleteValue(value.id)}
-                    className="text-red-500 text-sm hover:underline">Delete</button>
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 text-xs font-medium transition">🗑️ Delete</button>
                 </div>
               </div>
             ))}
@@ -375,9 +375,9 @@ async function handleDeleteBoardMember(id: number) {
             setEditingBoardMember(member)
             setBoardForm({ name: member.name, role: member.role, image: member.image ?? '', order: member.order, cv:member.cv })
             setShowBoardForm(true)
-          }} className="text-blue-600 text-xs hover:underline">Edit</button>
+          }} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 text-xs font-medium transition">✏️ Edit</button>
           <button onClick={() => handleDeleteBoardMember(member.id)}
-            className="text-red-500 text-xs hover:underline">Delete</button>
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 text-xs font-medium transition">🗑️ Delete</button>
         </div>
       </div>
     ))}
@@ -471,9 +471,13 @@ async function handleDeleteBoardMember(id: number) {
             setEditingMember(member)
             setTeamForm({ name: member.name, role: member.role, image: member.image ?? '', order: member.order, cv: member.cv })
             setShowTeamForm(true)
-          }} className="text-blue-600 text-sm hover:underline">Edit</button>
+           }}className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 text-xs font-medium transition">
+             ✏️ Edit
+          </button>
           <button onClick={() => handleDeleteMember(member.id)}
-        className="text-red-500 text-sm hover:underline">Delete</button>
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 text-xs font-medium transition">
+            🗑️ Delete
+          </button>
     </div>
   </div>
 ))}

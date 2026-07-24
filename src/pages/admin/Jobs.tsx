@@ -166,8 +166,8 @@ export default function AdminJobs() {
                     <p className="text-xs text-gray-400 mt-0.5">Deadline: {job.deadline}</p>
                   </div>
                   <div className="flex gap-2">
-                    <button onClick={() => handleEdit(job)} className="text-blue-600 text-sm hover:underline">Edit</button>
-                    <button onClick={() => handleDelete(job.id)} className="text-red-500 text-sm hover:underline">Delete</button>
+                    <button onClick={() => handleEdit(job)} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 text-xs font-medium transition">✏️ Edit</button>
+                    <button onClick={() => handleDelete(job.id)} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 text-xs font-medium transition">🗑️ Delete</button>
                   </div>
                 </div>
               </div>

@@ -89,19 +89,18 @@ export default function AdminContacts() {
         </p>
       </div>
       <div className="flex gap-2">
-        <button
-          onClick={() => {
-            setReplyingTo(replyingTo === msg.id ? null : msg.id)
-            setReplyText('')
-          }}
-          className="text-ngali-orange text-sm hover:underline"
-        >
-          {replyingTo === msg.id ? 'Cancel' : 'Reply'}
-        </button>
-        <button onClick={() => handleDelete(msg.id)}
-          className="text-red-500 text-sm hover:underline">
-          Delete
-        </button>
+       <button
+        onClick={() => {
+        setReplyingTo(replyingTo === msg.id ? null : msg.id)
+        setReplyText('')
+         }}
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-ngali-orange text-white hover:opacity-90 text-xs font-medium transition">
+        ↩️ {replyingTo === msg.id ? 'Cancel' : 'Reply'}
+       </button>
+       <button onClick={() => handleDelete(msg.id)}
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 text-xs font-medium transition">
+         🗑️ Delete
+       </button>
       </div>
     </div>
 
