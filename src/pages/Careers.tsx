@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { motion, useReducedMotion } from 'framer-motion'
 import careerHero from '../assets/career.jpg'
+import { JobSkeleton } from '../components/CardSkeleton'
 
 interface JobOpening {
   id: string
@@ -25,13 +27,19 @@ const careersContent = {
 export default function Careers() {
   const [jobOpenings, setJobOpenings] = useState<JobOpening[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
   const [activeDepartment, setActiveDepartment] = useState('All')
+  const shouldReduceMotion = useReducedMotion()
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/api/jobs`)
       .then((res) => res.json())
       .then((data) => {
         setJobOpenings(data)
+        setLoading(false)
+      })
+      .catch(() => {
+        setError(true)
         setLoading(false)
       })
   }, [])
@@ -48,30 +56,22 @@ export default function Careers() {
     return Math.ceil(diff / (1000 * 60 * 60 * 24))
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen w-full flex items-center justify-center">
-        <p className="text-gray-500">Loading...</p>
-      </div>
-    )
-  }
-
   return (
     <div>
       <section
-  className="min-h-screen w-full flex flex-col items-center justify-center text-white px-6 text-center relative"
-  style={{
-    backgroundImage: `url(${careerHero})`,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-  }}
->
-  <div className="absolute inset-0 bg-black/50"></div>
-  <div className="relative z-10">
-    <h1 className="text-3xl font-bold mb-3">Careers at Ngali Holdings</h1>
-    <p className="text-gray-300 max-w-2xl">{careersContent.intro}</p>
-  </div>
-</section>
+        className="min-h-screen w-full flex flex-col items-center justify-center text-white px-6 text-center relative"
+        style={{
+          backgroundImage: `url(${careerHero})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      >
+        <div className="absolute inset-0 bg-black/50"></div>
+        <div className="relative z-10">
+          <h1 className="text-3xl font-bold mb-3">Careers at Ngali Holdings</h1>
+          <p className="text-gray-300 max-w-2xl">{careersContent.intro}</p>
+        </div>
+      </section>
 
       <section className="min-h-screen w-full flex flex-col items-center justify-center bg-gray-50 px-6">
         <h2 className="text-2xl font-bold text-gray-800 mb-10">Why Work With Us</h2>
@@ -104,41 +104,58 @@ export default function Careers() {
           ))}
         </div>
 
-        <div className="max-w-3xl w-full space-y-4">
-          {filteredJobs.map((job) => {
-            const remaining = daysUntil(job.deadline)
-            return (
-              <Link
-                key={job.id}
-                to={`/careers/${job.id}`}
-                className="block bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition"
-              >
-                <div className="flex items-start justify-between mb-2">
-                  <div>
-                    <h3 className="font-semibold text-gray-800 text-lg">{job.title}</h3>
-                    <p className="text-sm text-gray-500">{job.department} · {job.location} · {job.type}</p>
-                  </div>
-                  {remaining > 0 && remaining <= 7 ? (
-                    <span className="text-xs font-medium text-red-600 bg-red-50 px-3 py-1 rounded-full whitespace-nowrap">
-                      Closing soon
-                    </span>
-                  ) : (
-                    <span className="text-xs font-medium text-green-700 bg-green-50 px-3 py-1 rounded-full whitespace-nowrap">
-                      Open
-                    </span>
-                  )}
-                </div>
-                <p className="text-xs text-gray-400">
-                  Apply by {new Date(job.deadline).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-                </p>
-              </Link>
-            )
-          })}
+        {loading ? (
+          <div className="max-w-3xl w-full space-y-4">
+            {Array.from({ length: 3 }).map((_, i) => <JobSkeleton key={i} />)}
+          </div>
+        ) : error ? (
+          <p className="text-gray-500 text-center">
+            We couldn't load open positions right now. Please try again later.
+          </p>
+        ) : (
+          <div className="max-w-3xl w-full space-y-4">
+            {filteredJobs.map((job, index) => {
+              const remaining = daysUntil(job.deadline)
+              return (
+                <motion.div
+                  key={job.id}
+                  initial={{ opacity: 0, x: shouldReduceMotion ? 0 : -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: shouldReduceMotion ? 0 : index * 0.08, duration: 0.3 }}
+                >
+                  <Link
+                    to={`/careers/${job.id}`}
+                    className="block bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg hover:border-ngali-orange transition-all group"
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <div>
+                        <h3 className="font-semibold text-gray-800 text-lg">{job.title}</h3>
+                        <p className="text-sm text-gray-500">{job.department} · {job.location} · {job.type}</p>
+                      </div>
+                      {remaining > 0 && remaining <= 7 ? (
+                        <span className="text-xs font-medium text-red-600 bg-red-50 px-3 py-1 rounded-full whitespace-nowrap">
+                          Closing soon
+                        </span>
+                      ) : (
+                        <span className="text-xs font-medium text-green-700 bg-green-50 px-3 py-1 rounded-full whitespace-nowrap">
+                          Open
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-400">
+                      Apply by {new Date(job.deadline).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                    </p>
+                  </Link>
+                </motion.div>
+              )
+            })}
 
-          {filteredJobs.length === 0 && (
-            <p className="text-gray-500 text-center">No open positions in this department right now.</p>
-          )}
-        </div>
+            {filteredJobs.length === 0 && (
+              <p className="text-gray-500 text-center">No open positions in this department right now.</p>
+            )}
+          </div>
+        )}
       </section>
     </div>
   )

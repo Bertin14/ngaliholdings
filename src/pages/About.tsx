@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import aboutHero1 from '../assets/About us_1.jpg'
 import aboutHero2 from '../assets/About us_2.jpg'
 import { Link } from 'react-router-dom'
+import { motion, useReducedMotion } from 'framer-motion'
+import { MemberSkeleton } from '../components/CardSkeleton'
 
 interface TeamMember {
   id: number
@@ -40,6 +42,7 @@ export default function About() {
   const [coreValues, setCoreValues] = useState<CoreValue[]>([])
   const [boardMembers, setBoardMembers] = useState<BoardMember[]>([])
   const [loading, setLoading] = useState(true)
+  const shouldReduceMotion = useReducedMotion()
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -48,28 +51,20 @@ export default function About() {
     return () => clearInterval(timer)
   }, [])
 
- useEffect(() => {
-  Promise.all([
-    fetch(`${API}/api/about`).then(r => r.json()).catch(() => null),
-    fetch(`${API}/api/values`).then(r => r.json()).catch(() => []),
-    fetch(`${API}/api/team`).then(r => r.json()).catch(() => []),
-    fetch(`${API}/api/board`).then(r => r.json()).catch(() => []),
-  ]).then(([about, values, team, board]) => {
-    setAboutContent(about)
-    setCoreValues(values ?? [])
-    setTeamMembers(team ?? [])
-    setBoardMembers(board ?? [])
-    setLoading(false)
-  })
-}, [])
-
-  if (loading) {
-    return (
-      <div className="min-h-screen w-full flex items-center justify-center">
-        <p className="text-gray-500">Loading...</p>
-      </div>
-    )
-  }
+  useEffect(() => {
+    Promise.all([
+      fetch(`${API}/api/about`).then(r => r.json()).catch(() => null),
+      fetch(`${API}/api/values`).then(r => r.json()).catch(() => []),
+      fetch(`${API}/api/team`).then(r => r.json()).catch(() => []),
+      fetch(`${API}/api/board`).then(r => r.json()).catch(() => []),
+    ]).then(([about, values, team, board]) => {
+      setAboutContent(about)
+      setCoreValues(values ?? [])
+      setTeamMembers(team ?? [])
+      setBoardMembers(board ?? [])
+      setLoading(false)
+    })
+  }, [])
 
   return (
     <div>
@@ -116,64 +111,91 @@ export default function About() {
           ))}
         </div>
       </section>
-      {/* Board Members - portrait style, 4 per row */}
-<section className="min-h-screen w-full flex flex-col items-center justify-center px-6 py-16">
-  <h2 className="text-xl font-semibold text-gray-800 mb-10">Board of Directors</h2>
-  <div className="max-w-5xl grid grid-cols-2 md:grid-cols-4 gap-6">
-    {boardMembers.map((member) => (
-      <Link
-        key={member.id}
-        to={`/member/${member.id}?type=board`}
-        className="flex flex-col items-center text-center hover:opacity-90 transition"
-      > 
-        {/* Portrait image - taller than wide */}
-        <div className="w-full aspect-3/4 rounded-lg overflow-hidden mb-3 bg-gray-200">
-          {member.image ? (
-            <img
-              src={member.image}
-              alt={member.name}
-              className="w-full h-full object-cover object-top"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gray-100">
-              <span className="text-4xl text-gray-300">👤</span>
-            </div>
-          )}
-        </div>
-        <p className="font-semibold text-gray-800 text-sm">{member.name}</p>
-        <p className="text-gray-500 text-xs mt-0.5">{member.role}</p>
-        <span className="text-ngali-orange text-xs mt-1 hover:underline">View profile →</span>
-      </Link>
-    ))}
-  </div>
-</section>
 
-  <section className="min-h-screen w-full flex flex-col items-center justify-center bg-gray-50 px-6 py-16">
-   <h2 className="text-xl font-semibold text-gray-800 mb-10">Leadership Team</h2>
-   <div className="max-w-5xl grid grid-cols-2 md:grid-cols-4 gap-6">
-     {teamMembers.map((member) => (
-  <Link
-  key={member.id}
-  to={`/member/${member.id}?type=team`}
-  className="flex flex-col items-center text-center hover:opacity-90 transition"
->
-    <div className="w-full aspect-3/4 rounded-lg overflow-hidden mb-3 bg-gray-200">
-      {member.image ? (
-        <img src={member.image} alt={member.name}
-          className="w-full h-full object-cover object-top" />
-      ) : (
-        <div className="w-full h-full flex items-center justify-center bg-gray-100">
-          <span className="text-4xl text-gray-300">👤</span>
-        </div>
-      )}
-    </div>
-    <p className="font-semibold text-gray-800 text-sm">{member.name}</p>
-    <p className="text-gray-500 text-xs mt-0.5">{member.role}</p>
-    <span className="text-ngali-orange text-xs mt-1 hover:underline">View profile →</span>
-  </Link>
-))}
-   </div>
- </section>
+      {/* Board Members - portrait style, 4 per row */}
+      <section className="min-h-screen w-full flex flex-col items-center justify-center px-6 py-16">
+        <h2 className="text-xl font-semibold text-gray-800 mb-10">Board of Directors</h2>
+        {loading ? (
+          <div className="max-w-5xl grid grid-cols-2 md:grid-cols-4 gap-6">
+            {Array.from({ length: 4 }).map((_, i) => <MemberSkeleton key={i} />)}
+          </div>
+        ) : (
+          <div className="max-w-5xl grid grid-cols-2 md:grid-cols-4 gap-6">
+            {boardMembers.map((member, index) => (
+              <motion.div
+                key={member.id}
+                initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: shouldReduceMotion ? 0 : index * 0.08, duration: 0.4 }}
+              >
+                <Link
+                  to={`/member/${member.id}?type=board`}
+                  className="flex flex-col items-center text-center hover:opacity-90 transition"
+                >
+                  {/* Portrait image - taller than wide */}
+                  <div className="w-full aspect-3/4 rounded-lg overflow-hidden mb-3 bg-gray-200">
+                    {member.image ? (
+                      <img
+                        src={member.image}
+                        alt={member.name}
+                        className="w-full h-full object-cover object-top"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                        <span className="text-4xl text-gray-300">👤</span>
+                      </div>
+                    )}
+                  </div>
+                  <p className="font-semibold text-gray-800 text-sm">{member.name}</p>
+                  <p className="text-gray-500 text-xs mt-0.5">{member.role}</p>
+                  <span className="text-ngali-orange text-xs mt-1 hover:underline">View profile →</span>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section className="min-h-screen w-full flex flex-col items-center justify-center bg-gray-50 px-6 py-16">
+        <h2 className="text-xl font-semibold text-gray-800 mb-10">Leadership Team</h2>
+        {loading ? (
+          <div className="max-w-5xl grid grid-cols-2 md:grid-cols-4 gap-6">
+            {Array.from({ length: 4 }).map((_, i) => <MemberSkeleton key={i} />)}
+          </div>
+        ) : (
+          <div className="max-w-5xl grid grid-cols-2 md:grid-cols-4 gap-6">
+            {teamMembers.map((member, index) => (
+              <motion.div
+                key={member.id}
+                initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: shouldReduceMotion ? 0 : index * 0.08, duration: 0.4 }}
+              >
+                <Link
+                  to={`/member/${member.id}?type=team`}
+                  className="flex flex-col items-center text-center hover:opacity-90 transition"
+                >
+                  <div className="w-full aspect-3/4 rounded-lg overflow-hidden mb-3 bg-gray-200">
+                    {member.image ? (
+                      <img src={member.image} alt={member.name}
+                        className="w-full h-full object-cover object-top" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                        <span className="text-4xl text-gray-300">👤</span>
+                      </div>
+                    )}
+                  </div>
+                  <p className="font-semibold text-gray-800 text-sm">{member.name}</p>
+                  <p className="text-gray-500 text-xs mt-0.5">{member.role}</p>
+                  <span className="text-ngali-orange text-xs mt-1 hover:underline">View profile →</span>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </section>
     </div>
   )
 }
