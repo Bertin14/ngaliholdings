@@ -119,18 +119,22 @@ export default function AdminAbout() {
   }
   async function handleBoardSubmit(e: React.FormEvent) {
   e.preventDefault()
-  if (editingBoardMember) {
-    await fetch(`${API}/api/board/${editingBoardMember.id}`, {
-      method: 'PUT',
+
+  const res = await fetch(
+    editingBoardMember
+      ? `${API}/api/board/${editingBoardMember.id}`
+      : `${API}/api/board`,
+    {
+      method: editingBoardMember ? 'PUT' : 'POST',
       headers: authHeaders,
       body: JSON.stringify(boardForm),
-    })
-  } else {
-    await fetch(`${API}/api/board`, {
-      method: 'POST',
-      headers: authHeaders,
-      body: JSON.stringify(boardForm),
-    })
+    }
+  )
+  const data = await res.json()
+
+  if (!res.ok) {
+    alert(data.error)
+    return
   }
   setShowBoardForm(false)
   setEditingBoardMember(null)
@@ -145,25 +149,31 @@ async function handleDeleteBoardMember(id: number) {
 }
 
   async function handleTeamSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    if (editingMember) {
-      await fetch(`${API}/api/team/${editingMember.id}`, {
-        method: 'PUT',
-        headers: authHeaders,
-        body: JSON.stringify(teamForm),
-      })
-    } else {
-      await fetch(`${API}/api/team`, {
-        method: 'POST',
-        headers: authHeaders,
-        body: JSON.stringify(teamForm),
-      })
+  e.preventDefault()
+  
+  const res = await fetch(
+    editingMember 
+      ? `${API}/api/team/${editingMember.id}` 
+      : `${API}/api/team`,
+    {
+      method: editingMember ? 'PUT' : 'POST',
+      headers: authHeaders,
+      body: JSON.stringify(teamForm),
     }
-    setShowTeamForm(false)
-    setEditingMember(null)
-    setTeamForm({ name: '', role: '', image: '', order: 0, cv: ''})
-    fetchAll()
+  )
+
+  const data = await res.json()
+  
+  if (!res.ok) {
+    alert(data.error) // shows "Order number X is already taken by Y"
+    return
   }
+
+  setShowTeamForm(false)
+  setEditingMember(null)
+  setTeamForm({ name: '', role: '', image: '', order: 0, cv: '' })
+  fetchAll()
+}
 
   async function handleDeleteMember(id: number) {
     if (!confirm('Delete this team member?')) return

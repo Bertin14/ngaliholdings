@@ -9,6 +9,7 @@ interface JobOpening {
   type: string
   description: string
   deadline: string
+  requiredFields?: string
 }
 
 const API = import.meta.env.VITE_API_URL
@@ -17,6 +18,11 @@ const NATIONALITIES = [
   'Rwandan', 'Burundian', 'Congolese', 'Kenyan', 'Ugandan',
   'Tanzanian', 'Ethiopian', 'South African', 'Nigerian', 'Ghanaian',
   'American', 'British', 'French', 'Belgian', 'Canadian', 'Other'
+]
+
+const DEFAULT_REQUIRED_FIELDS = [
+  'firstName', 'lastName', 'email', 'phone', 'dateOfBirth',
+  'gender', 'nationality', 'citizenship', 'cvUrl', 'coverLetterUrl', 'degreeUrl'
 ]
 
 export default function JobDetail() {
@@ -131,6 +137,17 @@ export default function JobDetail() {
     </div>
   )
 
+  const required = new Set(
+    job.requiredFields ? job.requiredFields.split(',') : DEFAULT_REQUIRED_FIELDS
+  )
+
+  const documentFields = [
+    { label: 'CV *', key: 'cvUrl' as const, uploadKey: 'cv' as const },
+    { label: 'Cover Letter', key: 'coverLetterUrl' as const, uploadKey: 'coverLetter' as const },
+    { label: 'Academic Degree *', key: 'degreeUrl' as const, uploadKey: 'degree' as const },
+    { label: 'Other Certificates', key: 'certificatesUrl' as const, uploadKey: 'certificates' as const },
+  ].filter(doc => required.has(doc.key))
+
   return (
     <div>
       {/* Job hero */}
@@ -211,82 +228,97 @@ export default function JobDetail() {
                       required placeholder="your@email.com"
                       className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:outline-none focus:border-ngali-orange" />
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number *</label>
-                    <input type="tel" value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      required placeholder="+250 7XX XXX XXX"
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:outline-none focus:border-ngali-orange" />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Date of Birth *</label>
-                      <input
-                       type="date"
-                       value={formData.dateOfBirth}
-                       onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
-                       required
-                       max={new Date(new Date().getFullYear() - 18, 11, 31).toISOString().split('T')[0]}
-                       min="1940-01-01"
-                       className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:outline-none focus:border-ngali-orange"
-                      />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Gender *</label>
-                    <div className="flex gap-4 mt-3">
-                      {['Male', 'Female', 'Prefer not to say'].map((option) => (
-                        <label key={option} className="flex items-center gap-2 cursor-pointer">
-                          <input
-                            type="radio"
-                            name="gender"
-                            value={option}
-                            checked={formData.gender === option}
-                            onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
-                            className="accent-ngali-orange"
-                          />
-                          <span className="text-sm text-gray-700">{option}</span>
-                        </label>
-                      ))}
+                  {required.has('phone') && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number *</label>
+                      <input type="tel" value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        required placeholder="+250 7XX XXX XXX"
+                        className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:outline-none focus:border-ngali-orange" />
                     </div>
-                  </div>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Nationality *</label>
-                    <select value={formData.nationality}
-                      onChange={(e) => setFormData({ ...formData, nationality: e.target.value })}
-                      required
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:outline-none focus:border-ngali-orange bg-white">
-                      <option value="">Select nationality</option>
-                      {NATIONALITIES.map(n => (
-                        <option key={n} value={n}>{n}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Citizenship *</label>
-                    <select value={formData.citizenship}
-                      onChange={(e) => setFormData({ ...formData, citizenship: e.target.value })}
-                      required
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:outline-none focus:border-ngali-orange bg-white">
-                      <option value="">Select citizenship</option>
-                      {NATIONALITIES.map(n => (
-                        <option key={n} value={n}>{n}</option>
-                      ))}
-                    </select>
-                  </div>
+                  {required.has('dateOfBirth') && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Date of Birth *</label>
+                        <input
+                         type="date"
+                         value={formData.dateOfBirth}
+                         onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
+                         required
+                         max={new Date(new Date().getFullYear() - 18, 11, 31).toISOString().split('T')[0]}
+                         min="1940-01-01"
+                         className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:outline-none focus:border-ngali-orange"
+                        />
+                    </div>
+                  )}
+                  {required.has('gender') && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Gender *</label>
+                      <div className="flex gap-4 mt-3">
+                        {['Male', 'Female', 'Prefer not to say'].map((option) => (
+                          <label key={option} className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="gender"
+                              value={option}
+                              checked={formData.gender === option}
+                              onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+                              className="accent-ngali-orange"
+                            />
+                            <span className="text-sm text-gray-700">{option}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {required.has('nationality') && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Nationality *</label>
+                      <select value={formData.nationality}
+                        onChange={(e) => setFormData({ ...formData, nationality: e.target.value })}
+                        required
+                        className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:outline-none focus:border-ngali-orange bg-white">
+                        <option value="">Select nationality</option>
+                        {NATIONALITIES.map(n => (
+                          <option key={n} value={n}>{n}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                  {required.has('citizenship') && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Citizenship *</label>
+                      <select value={formData.citizenship}
+                        onChange={(e) => setFormData({ ...formData, citizenship: e.target.value })}
+                        required
+                        className="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:outline-none focus:border-ngali-orange bg-white">
+                        <option value="">Select citizenship</option>
+                        {NATIONALITIES.map(n => (
+                          <option key={n} value={n}>{n}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex justify-end mt-6">
                   <button
                     type="button"
                     onClick={() => {
-                      if (!formData.firstName || !formData.lastName || !formData.email ||
-                        !formData.phone || !formData.dateOfBirth || !formData.gender ||
-                        !formData.nationality || !formData.citizenship) {
+                      const missing =
+                        !formData.firstName || !formData.lastName || !formData.email ||
+                        (required.has('phone') && !formData.phone) ||
+                        (required.has('dateOfBirth') && !formData.dateOfBirth) ||
+                        (required.has('gender') && !formData.gender) ||
+                        (required.has('nationality') && !formData.nationality) ||
+                        (required.has('citizenship') && !formData.citizenship)
+                      if (missing) {
                         alert('Please fill in all required fields')
                         return
                       }
@@ -306,12 +338,7 @@ export default function JobDetail() {
                 <h3 className="font-semibold text-gray-800 text-lg mb-4">Upload Documents</h3>
                 <p className="text-sm text-gray-500 -mt-2">Accepted formats: PDF, DOC, DOCX, JPG, PNG</p>
 
-                {[
-                  { label: 'Curriculum Vitae (CV) *', key: 'cvUrl' as const, uploadKey: 'cv' as const, required: true },
-                  { label: 'Cover Letter Document', key: 'coverLetterUrl' as const, uploadKey: 'coverLetter' as const, required: false },
-                  { label: 'Academic Degree / Diploma *', key: 'degreeUrl' as const, uploadKey: 'degree' as const, required: true },
-                  { label: 'Other Certificates', key: 'certificatesUrl' as const, uploadKey: 'certificates' as const, required: false },
-                ].map((doc) => (
+                {documentFields.map((doc) => (
                   <div key={doc.key} className="border border-gray-200 rounded-lg p-4">
                     <label className="block text-sm font-medium text-gray-700 mb-2">{doc.label}</label>
                     {formData[doc.key] ? (
@@ -360,7 +387,10 @@ export default function JobDetail() {
                   </button>
                   <button type="button"
                     onClick={() => {
-                      if (!formData.cvUrl || !formData.degreeUrl) {
+                      const missing =
+                        (required.has('cvUrl') && !formData.cvUrl) ||
+                        (required.has('degreeUrl') && !formData.degreeUrl)
+                      if (missing) {
                         alert('Please upload your CV and Degree — they are required')
                         return
                       }
@@ -377,52 +407,59 @@ export default function JobDetail() {
             {currentStep === 3 && (
     <div className="bg-white rounded-xl shadow-sm p-6 space-y-5">
     <h3 className="font-semibold text-gray-800 text-lg mb-2">Cover Letter</h3>
-    <p className="text-sm text-gray-500 mb-4">
-      Upload your cover letter document. Accepted formats: PDF, DOC, DOCX.
-    </p>
 
-    <div className="border border-gray-200 rounded-lg p-4">
-      <label className="block text-sm font-medium text-gray-700 mb-2">
-        Cover Letter Document *
-      </label>
-      {formData.coverLetterUrl ? (
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 bg-green-50 text-green-700 px-3 py-2 rounded-lg text-sm flex-1">
-            <span>✓</span>
-            <span>Cover letter uploaded successfully</span>
-          </div>
-          <button
-            type="button"
-            onClick={() => setFormData(prev => ({ ...prev, coverLetterUrl: '' }))}
-            className="text-red-500 text-sm hover:underline"
-          >
-            Remove
-          </button>
-        </div>
-      ) : (
-        <label className="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-gray-300 rounded-lg p-8 cursor-pointer hover:border-ngali-orange transition">
-          {uploading.coverLetter ? (
-            <span className="text-gray-500 text-sm">Uploading...</span>
+    {required.has('coverLetterUrl') ? (
+      <>
+        <p className="text-sm text-gray-500 mb-4">
+          Upload your cover letter document. Accepted formats: PDF, DOC, DOCX.
+        </p>
+
+        <div className="border border-gray-200 rounded-lg p-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Cover Letter Document *
+          </label>
+          {formData.coverLetterUrl ? (
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 bg-green-50 text-green-700 px-3 py-2 rounded-lg text-sm flex-1">
+                <span>✓</span>
+                <span>Cover letter uploaded successfully</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setFormData(prev => ({ ...prev, coverLetterUrl: '' }))}
+                className="text-red-500 text-sm hover:underline"
+              >
+                Remove
+              </button>
+            </div>
           ) : (
-            <>
-              <span className="text-4xl">📝</span>
-              <span className="text-sm text-gray-500">Click to upload your cover letter</span>
-              <span className="text-xs text-gray-400">PDF, DOC, DOCX up to 10MB</span>
-            </>
+            <label className="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-gray-300 rounded-lg p-8 cursor-pointer hover:border-ngali-orange transition">
+              {uploading.coverLetter ? (
+                <span className="text-gray-500 text-sm">Uploading...</span>
+              ) : (
+                <>
+                  <span className="text-4xl">📝</span>
+                  <span className="text-sm text-gray-500">Click to upload your cover letter</span>
+                  <span className="text-xs text-gray-400">PDF, DOC, DOCX up to 10MB</span>
+                </>
+              )}
+              <input
+                type="file"
+                accept=".pdf,.doc,.docx"
+                className="hidden"
+                disabled={uploading.coverLetter}
+                onChange={(e) => {
+                  const file = e.target.files?.[0]
+                  if (file) handleFileUpload(file, 'coverLetterUrl', 'coverLetter')
+                }}
+              />
+            </label>
           )}
-          <input
-            type="file"
-            accept=".pdf,.doc,.docx"
-            className="hidden"
-            disabled={uploading.coverLetter}
-            onChange={(e) => {
-              const file = e.target.files?.[0]
-              if (file) handleFileUpload(file, 'coverLetterUrl', 'coverLetter')
-            }}
-          />
-        </label>
-      )}
-    </div>
+        </div>
+      </>
+    ) : (
+      <p className="text-sm text-gray-500 mb-4">A cover letter isn't required for this role — you can continue to review.</p>
+    )}
 
     <div className="flex justify-between mt-6">
       <button type="button" onClick={() => setCurrentStep(2)}
@@ -432,7 +469,7 @@ export default function JobDetail() {
       <button
         type="button"
         onClick={() => {
-          if (!formData.coverLetterUrl) {
+          if (required.has('coverLetterUrl') && !formData.coverLetterUrl) {
             alert('Please upload your cover letter')
             return
           }
@@ -457,50 +494,60 @@ export default function JobDetail() {
                     <div className="grid grid-cols-2 gap-2 text-sm">
                       <div><span className="text-gray-500">Name:</span> <span className="font-medium">{formData.firstName} {formData.lastName}</span></div>
                       <div><span className="text-gray-500">Email:</span> <span className="font-medium">{formData.email}</span></div>
-                      <div><span className="text-gray-500">Phone:</span> <span className="font-medium">{formData.phone}</span></div>
-                      <div><span className="text-gray-500">Date of Birth:</span> <span className="font-medium">{formData.dateOfBirth}</span></div>
-                      <div><span className="text-gray-500">Gender:</span> <span className="font-medium">{formData.gender}</span></div>
-                      <div><span className="text-gray-500">Nationality:</span> <span className="font-medium">{formData.nationality}</span></div>
-                      <div><span className="text-gray-500">Citizenship:</span> <span className="font-medium">{formData.citizenship}</span></div>
+                      {required.has('phone') && (
+                        <div><span className="text-gray-500">Phone:</span> <span className="font-medium">{formData.phone}</span></div>
+                      )}
+                      {required.has('dateOfBirth') && (
+                        <div><span className="text-gray-500">Date of Birth:</span> <span className="font-medium">{formData.dateOfBirth}</span></div>
+                      )}
+                      {required.has('gender') && (
+                        <div><span className="text-gray-500">Gender:</span> <span className="font-medium">{formData.gender}</span></div>
+                      )}
+                      {required.has('nationality') && (
+                        <div><span className="text-gray-500">Nationality:</span> <span className="font-medium">{formData.nationality}</span></div>
+                      )}
+                      {required.has('citizenship') && (
+                        <div><span className="text-gray-500">Citizenship:</span> <span className="font-medium">{formData.citizenship}</span></div>
+                      )}
                     </div>
                   </div>
 
                   <div className="bg-gray-50 rounded-lg p-4">
                     <h4 className="font-medium text-gray-700 mb-3 text-sm uppercase tracking-wide">Documents</h4>
                     <div className="space-y-1 text-sm">
-                      <div className="flex items-center gap-2">
-                        <span className={formData.cvUrl ? 'text-green-600' : 'text-red-500'}>
-                          {formData.cvUrl ? '✓' : '✗'}
-                        </span>
-                        <span>CV / Resume</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className={formData.degreeUrl ? 'text-green-600' : 'text-red-500'}>
-                          {formData.degreeUrl ? '✓' : '✗'}
-                        </span>
-                        <span>Academic Degree</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className={formData.coverLetterUrl ? 'text-green-600' : 'text-gray-400'}>
-                          {formData.coverLetterUrl ? '✓' : '○'}
-                        </span>
-                        <span className="text-gray-500">Cover Letter Document (optional)</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className={formData.certificatesUrl ? 'text-green-600' : 'text-gray-400'}>
-                          {formData.certificatesUrl ? '✓' : '○'}
-                        </span>
-                        <span className="text-gray-500">Other Certificates (optional)</span>
-                      </div>
+                      {required.has('cvUrl') && (
+                        <div className="flex items-center gap-2">
+                          <span className={formData.cvUrl ? 'text-green-600' : 'text-red-500'}>
+                            {formData.cvUrl ? '✓' : '✗'}
+                          </span>
+                          <span>CV / Resume</span>
+                        </div>
+                      )}
+                      {required.has('degreeUrl') && (
+                        <div className="flex items-center gap-2">
+                          <span className={formData.degreeUrl ? 'text-green-600' : 'text-red-500'}>
+                            {formData.degreeUrl ? '✓' : '✗'}
+                          </span>
+                          <span>Academic Degree</span>
+                        </div>
+                      )}
+                      {required.has('coverLetterUrl') && (
+                        <div className="flex items-center gap-2">
+                          <span className={formData.coverLetterUrl ? 'text-green-600' : 'text-red-500'}>
+                            {formData.coverLetterUrl ? '✓' : '✗'}
+                          </span>
+                          <span>Cover Letter Document</span>
+                        </div>
+                      )}
+                      {required.has('certificatesUrl') && (
+                        <div className="flex items-center gap-2">
+                          <span className={formData.certificatesUrl ? 'text-green-600' : 'text-gray-400'}>
+                            {formData.certificatesUrl ? '✓' : '○'}
+                          </span>
+                          <span className="text-gray-500">Other Certificates (optional)</span>
+                        </div>
+                      )}
                     </div>
-                  </div>
-
-            <div className="bg-gray-50 rounded-lg p-4">
-                   <h4 className="font-medium text-gray-700 mb-2 text-sm uppercase tracking-wide">Cover Letter</h4>
-                  <div className="flex items-center gap-2 text-sm">
-                    <span className="text-green-600">✓</span>
-                      <span>Cover letter document uploaded</span>
-            </div>
                   </div>
                 </div>
 
