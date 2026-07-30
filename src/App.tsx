@@ -20,6 +20,7 @@ import AdminJobs from './pages/admin/Jobs'
 import AdminContacts from './pages/admin/Contacts'
 import AdminApplications from './pages/admin/Applications'
 import AdminAbout from './pages/admin/AboutPage'
+import AdminTeam from './pages/admin/Team'
 import MemberDetail from './pages/MemberDetail'
 
 function App() {
@@ -62,6 +63,11 @@ function App() {
 <Route path="/admin/about" element={
   <ProtectedRoute>
     <AdminAbout />
+  </ProtectedRoute>
+} />
+<Route path="/admin/team" element={
+  <ProtectedRoute>
+    <AdminTeam />
   </ProtectedRoute>
 } />
 

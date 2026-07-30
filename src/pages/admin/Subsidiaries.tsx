@@ -1,4 +1,4 @@
-import { useState, useEffect} from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '../../context/AuthContext'
 import AdminLayout from '../../components/AdminLayout'
@@ -56,6 +56,12 @@ export default function AdminSubsidiaries() {
 
   useEffect(() => { fetchSubsidiaries() }, [])
 
+  // Lock background scroll while the modal is open
+  useEffect(() => {
+    document.body.style.overflow = showForm ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [showForm])
+
   async function fetchSubsidiaries() {
     setLoading(true)
     const res = await fetch(`${API}/api/subsidiaries`)
@@ -102,7 +108,6 @@ export default function AdminSubsidiaries() {
     setEditing(sub)
     setForm({ id: sub.id, name: sub.name, description: sub.description, image: sub.image, sector: sub.sector ?? '' })
     setShowForm(true)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   // Filter + search
@@ -121,6 +126,11 @@ export default function AdminSubsidiaries() {
   const paginated = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
 
   const sectors = ['All', ...Array.from(new Set(subsidiaries.map(s => s.sector ?? '').filter(Boolean)))]
+
+  function closeForm() {
+    setShowForm(false)
+    setEditing(null)
+  }
 
   return (
     <AdminLayout>
@@ -214,81 +224,6 @@ export default function AdminSubsidiaries() {
             {sectorFilter !== 'All' && <span> in <strong>{sectorFilter}</strong></span>}
           </motion.p>
         )}
-
-        {/* Add/Edit Form */}
-        <AnimatePresence>
-          {showForm && (
-            <motion.div
-              initial={{ opacity: 0, y: -10, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -10, scale: 0.98 }}
-              transition={{ duration: 0.2 }}
-              className="bg-white border border-gray-200 rounded-2xl p-6 mb-6 shadow-sm"
-            >
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="font-semibold text-gray-900 text-lg">
-                  {editing ? `Edit — ${editing.name}` : 'Add New Subsidiary'}
-                </h3>
-                <button onClick={() => { setShowForm(false); setEditing(null) }}
-                  className="text-gray-400 hover:text-gray-600 text-xl leading-none">✕</button>
-              </div>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                {!editing && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">ID (slug) *</label>
-                    <input type="text" value={form.id}
-                      onChange={(e) => setForm({ ...form, id: e.target.value })}
-                      placeholder="e.g. ngali-energy"
-                      required className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-ngali-orange transition" />
-                  </div>
-                )}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
-                    <input type="text" value={form.name}
-                      onChange={(e) => setForm({ ...form, name: e.target.value })}
-                      required className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-gray-800 focus:outline-none focus:border-ngali-orange transition" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Sector</label>
-                    <select value={form.sector}
-                      onChange={(e) => setForm({ ...form, sector: e.target.value })}
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-gray-700 focus:outline-none focus:border-ngali-orange transition">
-                      <option value="">Select sector</option>
-                      {SECTORS.map(s => <option key={s} value={s}>{s}</option>)}
-                    </select>
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Description *</label>
-                  <textarea value={form.description}
-                    onChange={(e) => setForm({ ...form, description: e.target.value })}
-                    required rows={3}
-                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-gray-800 focus:outline-none focus:border-ngali-orange resize-none transition" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Image</label>
-                  <ImageUpload
-                    folder="subsidiaries"
-                    currentImage={form.image}
-                    onUpload={(url) => setForm({ ...form, image: url })}
-                  />
-                </div>
-                <div className="flex gap-3 pt-2">
-                  <button type="submit" disabled={submitting}
-                    className="flex items-center gap-2 bg-ngali-orange text-white px-5 py-2.5 rounded-xl hover:opacity-90 font-medium transition disabled:opacity-60">
-                    {submitting && <Spinner size="sm" />}
-                    {editing ? 'Save changes' : 'Add subsidiary'}
-                  </button>
-                  <button type="button" onClick={() => { setShowForm(false); setEditing(null) }}
-                    className="bg-gray-100 text-gray-600 px-5 py-2.5 rounded-xl hover:bg-gray-200 transition">
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            </motion.div>
-          )}
-        </AnimatePresence>
 
         {/* Skeleton loading */}
         {loading && (
@@ -416,6 +351,91 @@ export default function AdminSubsidiaries() {
             />
           </>
         )}
+
+        {/* Add/Edit Form — modal popup */}
+        <AnimatePresence>
+          {showForm && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={closeForm}
+              className="fixed inset-0 z-60 bg-black/50 flex items-start md:items-center justify-center p-4 overflow-y-auto"
+            >
+              <motion.div
+                initial={{ opacity: 0, y: 20, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 20, scale: 0.97 }}
+                transition={{ duration: 0.2 }}
+                onClick={(e) => e.stopPropagation()}
+                className="bg-white border border-gray-200 rounded-2xl p-6 shadow-2xl w-full max-w-lg my-8 max-h-[90vh] overflow-y-auto"
+              >
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="font-semibold text-gray-900 text-lg">
+                    {editing ? `Edit — ${editing.name}` : 'Add New Subsidiary'}
+                  </h3>
+                  <button onClick={closeForm}
+                    className="text-gray-400 hover:text-gray-600 text-xl leading-none">✕</button>
+                </div>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  {!editing && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">ID (slug) *</label>
+                      <input type="text" value={form.id}
+                        onChange={(e) => setForm({ ...form, id: e.target.value })}
+                        placeholder="e.g. ngali-energy"
+                        required className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-ngali-orange transition" />
+                    </div>
+                  )}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+                      <input type="text" value={form.name}
+                        onChange={(e) => setForm({ ...form, name: e.target.value })}
+                        required className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-gray-800 focus:outline-none focus:border-ngali-orange transition" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Sector</label>
+                      <select value={form.sector}
+                        onChange={(e) => setForm({ ...form, sector: e.target.value })}
+                        className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-gray-700 focus:outline-none focus:border-ngali-orange transition">
+                        <option value="">Select sector</option>
+                        {SECTORS.map(s => <option key={s} value={s}>{s}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Description *</label>
+                    <textarea value={form.description}
+                      onChange={(e) => setForm({ ...form, description: e.target.value })}
+                      required rows={3}
+                      className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-gray-800 focus:outline-none focus:border-ngali-orange resize-none transition" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Image</label>
+                    <ImageUpload
+                      folder="subsidiaries"
+                      currentImage={form.image}
+                      onUpload={(url) => setForm({ ...form, image: url })}
+                    />
+                  </div>
+                  <div className="flex gap-3 pt-2">
+                    <button type="submit" disabled={submitting}
+                      className="flex items-center gap-2 bg-ngali-orange text-white px-5 py-2.5 rounded-xl hover:opacity-90 font-medium transition disabled:opacity-60">
+                      {submitting && <Spinner size="sm" />}
+                      {editing ? 'Save changes' : 'Add subsidiary'}
+                    </button>
+                    <button type="button" onClick={closeForm}
+                      className="bg-gray-100 text-gray-600 px-5 py-2.5 rounded-xl hover:bg-gray-200 transition">
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
       </div>
     </AdminLayout>
   )

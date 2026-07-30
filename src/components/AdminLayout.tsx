@@ -7,6 +7,7 @@ const navLinks = [
   { label: 'Blog Posts', link: '/admin/blogs', icon: '📝' },
   { label: 'Job Openings', link: '/admin/jobs', icon: '💼' },
   { label: 'About Us Page', link: '/admin/about', icon: '👥' },
+  { label: 'Team', link: '/admin/team', icon: '🧑‍💼' },
   { label: 'Messages', link: '/admin/contacts', icon: '✉️' },
   { label: 'Applications', link: '/admin/applications', icon: '📋' },
 ]
