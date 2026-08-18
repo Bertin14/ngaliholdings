@@ -4,7 +4,7 @@ import footerImage from '../assets/footer-picture.jpg'
 export default function Footer() {
   return (
     <footer
-      className="w-full py-16 px-6 relative"
+      className="w-full relative"
       style={{
         backgroundImage: `url(${footerImage})`,
         backgroundSize: 'cover',
@@ -13,7 +13,9 @@ export default function Footer() {
     >
       <div className="absolute inset-0 bg-black/30"></div>
 
-      <div className="relative z-10 max-w-6xl mx-auto w-full grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+      {/* Main footer content — padding now lives here instead of on <footer>,
+          so the copyright band below can go full-bleed edge to edge. */}
+      <div className="relative z-10 max-w-6xl mx-auto w-full grid grid-cols-1 md:grid-cols-3 gap-8 px-6 pt-16 pb-12">
         <div>
           <h3 className="text-white font-semibold text-lg mb-2">Ngali Holdings</h3>
           <p className="text-sm text-gray-300">
@@ -39,8 +41,12 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="relative z-10 border-t border-gray-600 text-center text-xs text-gray-400 py-4 w-full max-w-6xl mx-auto">
-        © {new Date().getFullYear()} Ngali Holdings. All rights reserved.
+      {/* Full-width orange copyright band, edge to edge — sits outside the
+          max-w-6xl/px-6 wrapper above so it isn't inset like the rest of the footer. */}
+      <div className="relative z-10 w-full bg-ngali-orange py-4">
+        <p className="text-center text-sm text-white">
+          Ngali Holdings Ltd © {new Date().getFullYear()}. All Rights Reserved.
+        </p>
       </div>
     </footer>
   )
